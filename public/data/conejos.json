@@ -1,0 +1,248 @@
+[
+  {
+    "id": "C102",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "07-05-2025",
+    "fotoPrincipal": "/images/conejos/BlackFire/Conejo1/DSC_0255.webp",
+    "fotosAdicionales": [
+      "/images/conejos/BlackFire/Conejo1/DSC_0256.webp",
+      "/images/conejos/BlackFire/Conejo1/DSC_0257.webp",
+      "/images/conejos/BlackFire/Conejo1/DSC_0258.webp"
+    ]
+  },
+  {
+    "id": "C103",
+    "raza": "Mini Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "07-05-2025",
+    "fotoPrincipal": "/images/conejos/BlackFire/Conejo2/DSC_0263.webp",
+    "fotosAdicionales": [
+      "/images/conejos/BlackFire/Conejo2/DSC_0263.webp",
+      "/images/conejos/BlackFire/Conejo2/DSC_0264.webp",
+      "/images/conejos/BlackFire/Conejo2/DSC_0265.webp"
+    ]
+  },
+  {
+    "id": "C104",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "07-05-2025",
+    "fotoPrincipal": "/images/conejos/BlackFire/Conejo3/DSC_0266.webp",
+    "fotosAdicionales": [
+      "/images/conejos/BlackFire/Conejo3/DSC_0267.webp",
+      "/images/conejos/BlackFire/Conejo3/DSC_0268.webp"
+    ]
+  },
+  {
+    "id": "C105",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "07-05-2025",
+    "fotoPrincipal": "/images/conejos/BlackFire/Conejo4/DSC_0269.webp",
+    "fotosAdicionales": [
+      "/images/conejos/BlackFire/Conejo4/DSC_0270.webp",
+      "/images/conejos/BlackFire/Conejo4/DSC_0271.webp",
+      "/images/conejos/BlackFire/Conejo4/DSC_0272.webp",
+      "/images/conejos/BlackFire/Conejo4/DSC_0273.webp"
+    ]
+  },
+  {
+    "id": "C106",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "07-05-2025",
+    "fotoPrincipal": "/images/conejos/BlackFire/Conejo5/DSC_0274.webp",
+    "fotosAdicionales": [
+      "/images/conejos/BlackFire/Conejo5/DSC_0275.webp",
+      "/images/conejos/BlackFire/Conejo5/DSC_0276.webp",
+      "/images/conejos/BlackFire/Conejo5/DSC_0277.webp"
+    ]
+  },
+  {
+    "id": "C107",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "07-05-2025",
+    "fotoPrincipal": "/images/conejos/BlackFire/Conejo6/DSC_0278.webp",
+    "fotosAdicionales": [
+      "/images/conejos/BlackFire/Conejo6/DSC_0279.webp",
+      "/images/conejos/BlackFire/Conejo6/DSC_0280.webp",
+      "/images/conejos/BlackFire/Conejo6/DSC_0281.webp",
+      "/images/conejos/BlackFire/Conejo6/DSC_0282.webp"
+    ]
+  },
+  {
+    "id": "C108",
+    "raza": "Mini Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "08-05-2025",
+    "fotoPrincipal": "/images/conejos/Lola/Conejo1/DSC_0314.webp",
+    "fotosAdicionales": [
+      "/images/conejos/Lola/Conejo1/DSC_0315.webp",
+      "/images/conejos/Lola/Conejo1/DSC_0316.webp",
+      "/images/conejos/Lola/Conejo1/DSC_0317.webp",
+      "/images/conejos/Lola/Conejo1/DSC_0318.webp"
+    ]
+  },
+  {
+    "id": "C109",
+    "raza": "Holland Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "08-05-2025",
+    "fotoPrincipal": "/images/conejos/Lola/Conejo2/DSC_0319.webp",
+    "fotosAdicionales": [
+      "/images/conejos/Lola/Conejo2/DSC_0320.webp",
+      "/images/conejos/Lola/Conejo2/DSC_0321.webp"
+    ]
+  },
+  {
+    "id": "C110",
+    "raza": "Holland Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo1/DSC_0308.webp",
+    "fotosAdicionales": [
+      "/images/conejos/CafeMiniLoop/Conejo1/DSC_0309.webp",
+      "/images/conejos/CafeMiniLoop/Conejo1/DSC_0310.webp",
+      "/images/conejos/CafeMiniLoop/Conejo1/DSC_0311.webp",
+      "/images/conejos/CafeMiniLoop/Conejo1/DSC_0312.webp",
+      "/images/conejos/CafeMiniLoop/Conejo1/DSC_0313.webp"
+    ]
+  },
+  {
+    "id": "C111",
+    "raza": "Holland Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo2/DSC_0304.webp",
+    "fotosAdicionales": [
+      "/images/conejos/CafeMiniLoop/Conejo2/DSC_0305.webp",
+      "/images/conejos/CafeMiniLoop/Conejo2/DSC_0306.webp",
+      "/images/conejos/CafeMiniLoop/Conejo2/DSC_0307.webp"
+    ]
+  },
+  {
+    "id": "C112",
+    "raza": "Holland Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo3/DSC_0299.webp",
+    "fotosAdicionales": [
+      "/images/conejos/CafeMiniLoop/Conejo3/DSC_0300.webp",
+      "/images/conejos/CafeMiniLoop/Conejo3/DSC_0301.webp",
+      "/images/conejos/CafeMiniLoop/Conejo3/DSC_0302.webp",
+      "/images/conejos/CafeMiniLoop/Conejo3/DSC_0303.webp"
+    ]
+  },
+  {
+    "id": "C113",
+    "raza": "Holland Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo4/DSC_0292.webp",
+    "fotosAdicionales": [
+      "/images/conejos/CafeMiniLoop/Conejo4/DSC_0293.webp",
+      "/images/conejos/CafeMiniLoop/Conejo4/DSC_0294.webp",
+      "/images/conejos/CafeMiniLoop/Conejo4/DSC_0295.webp",
+      "/images/conejos/CafeMiniLoop/Conejo4/DSC_0296.webp"
+    ]
+  },
+  {
+    "id": "C114",
+    "raza": "Mini Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo5/DSC_0287.webp",
+    "fotosAdicionales": [
+      "/images/conejos/CafeMiniLoop/Conejo5/DSC_0288.webp",
+      "/images/conejos/CafeMiniLoop/Conejo5/DSC_0289.webp",
+      "/images/conejos/CafeMiniLoop/Conejo5/DSC_0290.webp"
+     
+    ]
+  },
+  {
+    "id": "C115",
+    "raza": "Mini Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo6/DSC_0284.webp",
+    "fotosAdicionales": [
+      "/images/conejos/CafeMiniLoop/Conejo6/DSC_0284.webp",
+      "/images/conejos/CafeMiniLoop/Conejo6/DSC_0285.webp",
+      "/images/conejos/CafeMiniLoop/Conejo6/DSC_0286.webp"
+    ]
+  },
+  {
+    "id": "C116",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/Mariposa/Conejo1/DSC_0327.webp",
+    "fotosAdicionales": [
+      "/images/conejos/Mariposa/Conejo1/DSC_0328.webp",
+      "/images/conejos/Mariposa/Conejo1/DSC_0329.webp",
+      "/images/conejos/Mariposa/Conejo1/DSC_0330.webp",
+      "/images/conejos/Mariposa/Conejo1/DSC_0331.webp"
+    ]
+  },
+  {
+    "id": "C117",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/Mariposa/Conejo2/DSC_0333.webp",
+    "fotosAdicionales": [
+      "/images/conejos/Mariposa/Conejo2/DSC_0334.webp",
+      "/images/conejos/Mariposa/Conejo2/DSC_0335.webp",
+      "/images/conejos/Mariposa/Conejo2/DSC_0336.webp"
+    ]
+  },
+  {
+    "id": "C118",
+    "raza": "Mini Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/Mariposa/Conejo3/DSC_0337.webp",
+    "fotosAdicionales": [
+      "/images/conejos/Mariposa/Conejo3/DSC_0338.webp",
+      "/images/conejos/Mariposa/Conejo3/DSC_0339.webp",
+      "/images/conejos/Mariposa/Conejo3/DSC_0340.webp"
+    ]
+  },
+  {
+    "id": "C119",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/Mariposa/Conejo4/DSC_0341.webp",
+    "fotosAdicionales": [
+      "/images/conejos/Mariposa/Conejo4/DSC_0342.webp",
+      "/images/conejos/Mariposa/Conejo4/DSC_0343.webp",
+      "/images/conejos/Mariposa/Conejo4/DSC_0344.webp"
+    ]
+  },
+  {
+    "id": "C120",
+    "raza": "Mini Lop",
+    "sexo": "Hembra",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/Mariposa/Conejo5/DSC_0346.webp",
+    "fotosAdicionales": [
+      "/images/conejos/Mariposa/Conejo5/DSC_0347.webp",
+      "/images/conejos/Mariposa/Conejo5/DSC_0348.webp"
+    ]
+  },
+  {
+    "id": "C121",
+    "raza": "Fuzzie Lop",
+    "sexo": "Macho",
+    "fechaNacimiento": "22-05-2025",
+    "fotoPrincipal": "/images/conejos/Mariposa/Conejo6/DSC_0349.webp",
+    "fotosAdicionales": [
+      "/images/conejos/Mariposa/Conejo6/DSC_0350.webp",
+      "/images/conejos/Mariposa/Conejo6/DSC_0351.webp"
+    ]
+  }
+
+] 

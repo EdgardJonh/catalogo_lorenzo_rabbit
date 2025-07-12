@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐰 Catálogo de Conejos - Next.js
 
-## Getting Started
+Un catálogo web moderno y responsivo para mostrar conejos disponibles, desarrollado con Next.js 15, TypeScript y Tailwind CSS.
 
-First, run the development server:
+## 🚀 Características
 
+- **Catálogo interactivo** de conejos con fotos y detalles
+- **Diseño responsivo** que se adapta a diferentes dispositivos
+- **Modal de detalles** para ver información completa de cada conejo
+- **Filtros por raza y sexo** para facilitar la búsqueda
+- **Interfaz moderna** con Tailwind CSS
+- **Optimización de imágenes** con Next.js Image
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Next.js 15** - Framework de React
+- **TypeScript** - Tipado estático
+- **Tailwind CSS** - Framework de CSS utilitario
+- **React Icons** - Iconografía
+- **Fontsource Inter** - Tipografía optimizada
+
+## 📦 Instalación
+
+1. **Clona el repositorio:**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/tu-usuario/catalogo-conejos.git
+cd catalogo-conejos
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Instala las dependencias:**
+```bash
+npm install
+# o
+yarn install
+# o
+pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Ejecuta el servidor de desarrollo:**
+```bash
+npm run dev
+# o
+yarn dev
+# o
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Abre [http://localhost:3000](http://localhost:3000)** en tu navegador para ver el resultado.
 
-## Learn More
+## 📁 Estructura del Proyecto
 
-To learn more about Next.js, take a look at the following resources:
+```
+catalogo-conejos/
+├── app/
+│   ├── components/          # Componentes React
+│   │   ├── CatalogoConejos.tsx
+│   │   ├── ConejoCard.tsx
+│   │   └── ConejoModal.tsx
+│   ├── globals.css         # Estilos globales
+│   ├── layout.tsx          # Layout principal
+│   └── page.tsx            # Página principal
+├── public/
+│   ├── data/
+│   │   └── conejos.json    # Datos de los conejos
+│   └── images/             # Imágenes de los conejos
+└── package.json
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Personalización
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Los datos de los conejos se encuentran en `public/data/conejos.json`. Puedes agregar, modificar o eliminar conejos editando este archivo.
 
-## Deploy on Vercel
+## 🚀 Despliegue
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Vercel (Recomendado)
+La forma más fácil de desplegar tu aplicación Next.js es usar [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Otros proveedores
+Consulta la [documentación de despliegue de Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para más detalles.
+
+## 📝 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
+## 🤝 Contribuciones
+
+Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request.
+
+---
+
+Desarrollado con ❤️ usando Next.js
