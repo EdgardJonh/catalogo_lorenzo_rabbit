@@ -1,5 +1,5 @@
 import Image from "next/image";
-import CatalogoConejos from "@components/CatalogoConejos";
+import CatalogoConejos from "./components/CatalogoConejos";
 
 export default function Home() {
   return (

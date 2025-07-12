@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FaCamera } from "react-icons/fa";
-import ConejoModal from "@components/ConejoModal";
+import ConejoModal from "./ConejoModal";
 
 interface Conejo {
   id: string;

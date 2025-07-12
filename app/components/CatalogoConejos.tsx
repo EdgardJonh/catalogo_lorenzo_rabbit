@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import ConejoCard from "@components/ConejoCard";
+import ConejoCard from "./ConejoCard";
 
 interface Conejo {
   id: string;
