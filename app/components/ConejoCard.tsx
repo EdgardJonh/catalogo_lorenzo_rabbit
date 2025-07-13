@@ -18,12 +18,23 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
   const [modalOpen, setModalOpen] = useState(false);
   const isDisponible = conejo.disponibilidad === "Disponible";
   
+  const openPhotoModal = () => {
+    if (isDisponible) {
+      setModalOpen(true);
+    }
+  };
+  
   return (
     <div className={`bg-white rounded-xl shadow-md p-4 flex flex-col items-center hover:shadow-lg transition-shadow ${
       !isDisponible ? 'opacity-60' : ''
     }`}>
       <div className="relative">
-        <div className="relative w-40 h-40 mb-4">
+        <div 
+          className={`relative w-40 h-40 mb-4 cursor-pointer transition-transform hover:scale-105 ${
+            !isDisponible ? 'cursor-not-allowed' : ''
+          }`}
+          onClick={openPhotoModal}
+        >
           <Image
             src={conejo.fotoPrincipal}
             alt={`Foto principal de ${conejo.id}`}
@@ -43,6 +54,11 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
         }`}>
           {conejo.disponibilidad}
         </div>
+        {isDisponible && (
+          <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
+            Click para ver fotos
+          </div>
+        )}
       </div>
       <div className="w-full text-center">
         <h2 className="text-xl font-semibold mb-1">{conejo.id}</h2>
