@@ -7,6 +7,7 @@ interface Conejo {
   raza: string;
   sexo: string;
   fechaNacimiento: string;
+  disponibilidad: string;
   fotoPrincipal: string;
   fotosAdicionales: string[];
 }
