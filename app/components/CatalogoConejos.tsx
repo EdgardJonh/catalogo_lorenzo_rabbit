@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import ConejoCard from "./ConejoCard";
 
 interface Conejo {
@@ -12,18 +11,14 @@ interface Conejo {
   fotosAdicionales: string[];
 }
 
-export default function CatalogoConejos() {
-  const [conejos, setConejos] = useState<Conejo[]>([]);
+interface CatalogoConejosProps {
+  conejos: Conejo[];
+}
 
-  useEffect(() => {
-    fetch("/data/conejos.json")
-      .then((res) => res.json())
-      .then(setConejos);
-  }, []);
-
+export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
   return (
     <section>
-      <h1 className="text-3xl font-bold mb-8 text-center">Catálogo de Conejos</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-white">Catálogo de Conejos</h1>
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {conejos.map((conejo) => (
           <ConejoCard key={conejo.id} conejo={conejo} />
