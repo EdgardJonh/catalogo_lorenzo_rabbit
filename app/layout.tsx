@@ -28,6 +28,16 @@ export default function RootLayout({
     <html lang="es">
       <head>
         <link rel="icon" href="/logos/logopes.svg" type="image/svg+xml" />
+        {/* Open Graph y Twitter Card */}
+        <meta property="og:title" content="Catálogo de Conejos - Criadero Lorenzo Rabbit" />
+        <meta property="og:description" content="Catálogo web de conejos disponibles del Criadero Lorenzo Rabbit. Mini Lop, Holland Lop y más razas disponibles." />
+        <meta property="og:image" content="/logos/logopes.svg" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://TUDOMINIO.com" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Catálogo de Conejos - Criadero Lorenzo Rabbit" />
+        <meta name="twitter:description" content="Catálogo web de conejos disponibles del Criadero Lorenzo Rabbit. Mini Lop, Holland Lop y más razas disponibles." />
+        <meta name="twitter:image" content="/logos/logopes.svg" />
       </head>
       <body className="font-sans bg-gray-50 text-gray-900">
         {children}
