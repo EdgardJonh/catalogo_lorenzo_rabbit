@@ -15,9 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Catálogo de Conejos - Criadero Lorenzo Rabbit",
+  title: "Criadero LorenZo Rabbit",
   description: "Catálogo web de conejos disponibles del Criadero Lorenzo Rabbit. Mini Lop, Holland Lop y más razas disponibles.",
 };
+
+const SITE_URL = "https://catalogo-lorenzo-rabbit.vercel.app";
 
 export default function RootLayout({
   children,
@@ -31,13 +33,13 @@ export default function RootLayout({
         {/* Open Graph y Twitter Card */}
         <meta property="og:title" content="Catálogo de Conejos - Criadero Lorenzo Rabbit" />
         <meta property="og:description" content="Catálogo web de conejos disponibles del Criadero Lorenzo Rabbit. Mini Lop, Holland Lop y más razas disponibles." />
-        <meta property="og:image" content="/logos/logolorenzo.png" />
+        <meta property="og:image" content={`${SITE_URL}/logos/logolorenzo.png`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://catalogo-lorenzo-rabbit.vercel.app/" />
+        <meta property="og:url" content={SITE_URL} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Catálogo de Conejos - Criadero Lorenzo Rabbit" />
+        <meta name="twitter:title" content="Criadero LorenZo Rabbit" />
         <meta name="twitter:description" content="Catálogo web de conejos disponibles del Criadero Lorenzo Rabbit. Mini Lop, Holland Lop y más razas disponibles." />
-        <meta name="twitter:image" content="/logos/logolorenzo.png" />
+        <meta name="twitter:image" content={`${SITE_URL}/logos/logolorenzo.png`} />
       </head>
       <body className="font-sans bg-gray-50 text-gray-900">
         {children}
