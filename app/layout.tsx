@@ -31,7 +31,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/logos/logopes.svg" type="image/svg+xml" />
         {/* Open Graph y Twitter Card */}
-        <meta property="og:title" content="Catálogo de Conejos - Criadero Lorenzo Rabbit" />
+        <meta property="og:title" content="Criadero LorenZo Rabbit" />
         <meta property="og:description" content="Catálogo web de conejos disponibles del Criadero Lorenzo Rabbit. Mini Lop, Holland Lop y más razas disponibles." />
         <meta property="og:image" content={`${SITE_URL}/logos/logolorenzo.png`} />
         <meta property="og:type" content="website" />
