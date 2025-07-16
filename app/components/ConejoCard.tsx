@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaCamera } from "react-icons/fa";
 import Image from "next/image";
 import ConejoModal from "./ConejoModal";
@@ -17,13 +17,31 @@ interface Conejo {
 export default function ConejoCard({ conejo }: { conejo: Conejo }) {
   const [modalOpen, setModalOpen] = useState(false);
   const isDisponible = conejo.disponibilidad === "Disponible";
-  
+
+  // Manejo del historial para el modal
+  useEffect(() => {
+    if (!modalOpen) return;
+    // Agrega un estado al historial al abrir el modal
+    window.history.pushState({ modal: true }, "");
+    const handlePopState = (e: PopStateEvent) => {
+      setModalOpen(false);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      // Si el modal se cierra por otro medio, retrocede el historial si el estado es modal
+      if (window.history.state && window.history.state.modal) {
+        window.history.back();
+      }
+    };
+  }, [modalOpen]);
+
   const openPhotoModal = () => {
     if (isDisponible) {
       setModalOpen(true);
     }
   };
-  
+
   return (
     <div className={`bg-white rounded-xl shadow-md p-4 flex flex-col items-center hover:shadow-lg transition-shadow ${
       !isDisponible ? 'opacity-60' : ''
