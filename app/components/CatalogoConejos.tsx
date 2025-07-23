@@ -45,8 +45,8 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
             />
           </span>
         </div>
-        <h1 className={`${luckiestGuy.className} ${styles.tituloGrande}`}>Catálogo de Conejos</h1>
-        <p className={`${roboto.className} ${styles.tituloPequeno}`}>Criadero Lorenzo Rabbit</p>
+        <h1 className={`${luckiestGuy.className} text-5xl text-gray-50 font-bold mb-0`}>LorenZo Rabbit</h1>
+        <p className={`${roboto.className} text-2xl text-gray-50 mb-2`}>Catálogo de Conejos</p>
       </div>
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {conejos.map((conejo) => (
