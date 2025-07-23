@@ -42,6 +42,7 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
     }
   };
 
+
   return (
     <div className={`bg-white rounded-xl shadow-md p-4 flex flex-col items-center hover:shadow-lg transition-shadow ${
       !isDisponible ? 'opacity-60' : ''

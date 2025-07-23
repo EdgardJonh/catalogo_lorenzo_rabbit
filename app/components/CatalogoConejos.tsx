@@ -1,6 +1,8 @@
 "use client";
 import ConejoCard from "./ConejoCard";
 import Image from "next/image";
+import { Luckiest_Guy, Roboto } from "next/font/google";
+import styles  from "../styles/home.module.css";
 
 interface Conejo {
   id: string;
@@ -15,8 +17,17 @@ interface Conejo {
 interface CatalogoConejosProps {
   conejos: Conejo[];
 }
+  const luckiestGuy = Luckiest_Guy({
+    subsets: ["latin"], 
+    weight: "400",
+  });
+  const roboto = Roboto({
+    subsets: ["latin"],
+    weight: ["400", "500", "700"]
+  });
 
 export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
+
   return (
     <section>
       {/* Header con Logo */}
@@ -34,8 +45,8 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
             />
           </span>
         </div>
-        <h1 className="text-3xl font-bold mb-2 text-white">Catálogo de Conejos</h1>
-        <p className="text-gray-300 text-lg">Criadero Lorenzo Rabbit</p>
+        <h1 className={`${luckiestGuy.className} ${styles.tituloGrande}`}>Catálogo de Conejos</h1>
+        <p className={`${roboto.className} ${styles.tituloPequeno}`}>Criadero Lorenzo Rabbit</p>
       </div>
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {conejos.map((conejo) => (
