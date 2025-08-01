@@ -5,6 +5,7 @@ import "@fontsource/inter";
 import WhatsappButton from "./components/WhatsappButton";
 
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

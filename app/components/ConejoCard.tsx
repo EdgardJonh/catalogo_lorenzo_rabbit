@@ -8,6 +8,8 @@ interface Conejo {
   id: string;
   raza: string;
   sexo: string;
+  precio: number;
+  tieneDescuento: boolean;
   fechaNacimiento: string;
   disponibilidad: string;
   fotoPrincipal: string;
@@ -42,6 +44,8 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
     }
   };
 
+  // Precio con decuento
+  const precioConDescuento = conejo.tieneDescuento ? (conejo.precio * 0.16).toFixed(2) : null;
 
   return (
     <div className={`bg-white rounded-xl shadow-md p-4 flex flex-col items-center hover:shadow-lg transition-shadow ${
@@ -66,6 +70,11 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
             loading="lazy"
           />
         </div>
+        {conejo.tieneDescuento && (
+          <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-xl text-xs">
+            -16%
+          </div>
+        )}
         <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold ${
           isDisponible 
             ? 'bg-green-500 text-white' 
