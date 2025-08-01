@@ -139,7 +139,7 @@
   },
   {
     "id": "C111",
-    "raza": "Holland Lop",
+    "raza": "Mini Lop",
     "sexo": "Macho",
     "precio": 30000,
     "tieneDescuento": true,
@@ -154,7 +154,7 @@
   },
   {
     "id": "C112",
-    "raza": "Holland Lop",
+    "raza": "Mini Lop",
     "sexo": "Hembra",
     "precio": 30000,
     "tieneDescuento": true,
@@ -170,7 +170,7 @@
   },
   {
     "id": "C113",
-    "raza": "Holland Lop",
+    "raza": "Mini Lop",
     "sexo": "Hembra",
     "precio": 30000,
     "tieneDescuento": false,

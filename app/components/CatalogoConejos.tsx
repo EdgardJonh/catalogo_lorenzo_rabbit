@@ -50,14 +50,14 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
         </div>
         {/* Títulos con fuentes personalizadas */}
         <div className="">
-           <h1 className="text-3xl md:text-4xl font-bold text-purple-400 mb-4">
+           <h1 className="text-3xl md:text-4xl font-bold text-purple-400 mb-1">
         ¡Bienvenidos a <span className={`${luckiestGuy.className} text-4xl text-gray-50`}>LorenZo Rabbit</span>!
       </h1>
-        <h1 className={`${luckiestGuy.className} text-5xl text-gray-400 font-bold mb-0`}>LorenZo Rabbit</h1>
-         <p className="text-gray-400 mb-6">
+        {/* <h1 className={`${luckiestGuy.className} text-5xl text-gray-400 font-bold mb-0`}>LorenZo Rabbit</h1> */}
+         <p className="text-gray-400 mb-6 w-96 mx-auto">
         Descubre el adorable mundo de nuestros conejitos y vive una experiencia única.
       </p>
-      <VisitUs />
+      
         </div>
         
         {/* <p className={`${roboto.className} text-2xl text-gray-50 mb-2 mt-2`}>Catálogo de Conejos</p> */}
@@ -66,7 +66,12 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
         {conejos.map((conejo) => (
           <ConejoCard key={conejo.id} conejo={conejo} />
         ))}
+        
       </div>
+      <div className="text-center mt-12">
+        <VisitUs />
+      </div>
+      
     </section>
   );
 } 
