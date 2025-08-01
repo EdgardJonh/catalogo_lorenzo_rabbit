@@ -2,12 +2,15 @@
 import ConejoCard from "./ConejoCard";
 import Image from "next/image";
 import { Luckiest_Guy, Roboto } from "next/font/google";
+import VisitUs from "./VisitUs";
 import styles  from "../styles/home.module.css";
 
 interface Conejo {
   id: string;
   raza: string;
   sexo: string;
+  precio: number;
+  tieneDescuento: boolean;
   fechaNacimiento: string;
   disponibilidad: string;
   fotoPrincipal: string;
@@ -45,8 +48,19 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
             />
           </span>
         </div>
-        <h1 className={`${luckiestGuy.className} text-5xl text-gray-50 font-bold mb-0`}>LorenZo Rabbit</h1>
-        <p className={`${roboto.className} text-2xl text-gray-50 mb-2`}>Catálogo de Conejos</p>
+        {/* Títulos con fuentes personalizadas */}
+        <div className="">
+           <h1 className="text-3xl md:text-4xl font-bold text-purple-400 mb-4">
+        ¡Bienvenidos a <span className={`${luckiestGuy.className} text-4xl text-gray-50`}>LorenZo Rabbit</span>!
+      </h1>
+        <h1 className={`${luckiestGuy.className} text-5xl text-gray-400 font-bold mb-0`}>LorenZo Rabbit</h1>
+         <p className="text-gray-400 mb-6">
+        Descubre el adorable mundo de nuestros conejitos y vive una experiencia única.
+      </p>
+      <VisitUs />
+        </div>
+        
+        {/* <p className={`${roboto.className} text-2xl text-gray-50 mb-2 mt-2`}>Catálogo de Conejos</p> */}
       </div>
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {conejos.map((conejo) => (
