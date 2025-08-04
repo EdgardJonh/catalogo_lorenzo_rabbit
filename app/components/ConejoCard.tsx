@@ -43,9 +43,11 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
       setModalOpen(true);
     }
   };
-
+const formatoCLP = (valor: number) =>
+  new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(valor);
   // Precio con decuento
-  const precioConDescuento = conejo.tieneDescuento ? (conejo.precio * 0.16).toFixed(2) : null;
+  const precioDes = 0.15 * conejo.precio;
+  const precioConDescuento:number  = conejo.tieneDescuento ? (conejo.precio - precioDes): (conejo.precio);
 
   return (
     <div className={`bg-white rounded-xl shadow-md p-4 flex flex-col items-center hover:shadow-lg transition-shadow ${
@@ -72,7 +74,7 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
         </div>
         {conejo.tieneDescuento && (
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-xl text-xs">
-            -16%
+            -15%
           </div>
         )}
         <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold ${
@@ -93,6 +95,29 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
         <p className="text-gray-600 mb-1">Raza: <span className="font-medium">{conejo.raza}</span></p>
         <p className="text-gray-600 mb-1">Sexo: <span className="font-medium">{conejo.sexo}</span></p>
         <p className="text-gray-600 mb-2">Nacimiento: <span className="font-medium">{conejo.fechaNacimiento}</span></p>
+       <div className="mb-2 flex flex-col items-center">
+  {conejo.tieneDescuento ? (
+    <>
+      <div className="flex items-center gap-2 mb-1">
+         <span className="bg-blue-300 text-blue-600 px-2 py-1 rounded-xl text-xs">
+          -15%
+        </span>
+        <span className="text-red-500 line-through text-sm">
+          {formatoCLP(conejo.precio)}
+        </span>
+       
+      </div>
+      <p className="text-green-600 font-bold text-lg">
+        {formatoCLP(precioConDescuento)}
+      </p>
+    </>
+  ) : (
+    <p className="text-green-600 font-bold text-lg">
+      <span className="font-bold">{formatoCLP(conejo.precio)}</span>
+    </p>
+  )}
+</div>
+        
         <button
           className={`mt-2 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors mx-auto ${
             isDisponible 
@@ -114,4 +139,4 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
       )}
     </div>
   );
-} 
+}

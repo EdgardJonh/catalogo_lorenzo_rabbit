@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Luckiest_Guy, Roboto } from "next/font/google";
 import VisitUs from "./VisitUs";
 import styles  from "../styles/home.module.css";
+import Festividad from "./Festividad";
 
 interface Conejo {
   id: string;
@@ -66,8 +67,8 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
       <h2 className={`${luckiestGuy.className} text-3xl md:text-4xl font-bold text-gray-50 mb-6 text-center`}>
         Catálogo de <span className={`${luckiestGuy.className} text-3xl md:text-4xl font-bold text-purple-400 mb-6`}>Conejos</span>
       </h2>
-      <div>
-
+      <div >
+        <Festividad />
       </div>
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {conejos.map((conejo) => (
