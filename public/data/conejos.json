@@ -175,7 +175,7 @@
     "precio": 30000,
     "tieneDescuento": false,
     "fechaNacimiento": "22-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo4/DSC_0292.webp",
     "fotosAdicionales": [
       "/images/conejos/CafeMiniLoop/Conejo4/DSC_0293.webp",
