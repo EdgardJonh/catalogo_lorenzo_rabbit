@@ -18,7 +18,7 @@ export default function Direccion() {
             </div>
             <div className="ml-4">
               <h3 className="text-lg font-medium text-gray-900">Dirección</h3>
-              <p className="mt-1 text-gray-600">KM 4 Ruta U-40</p>
+              {/* <p className="mt-1 text-gray-600">KM 4 Ruta U-40</p> */}
               <p className="text-gray-600">Osorno, Región de Los Lagos</p>
               <p className="text-gray-600">Chile</p>
             </div>
@@ -48,7 +48,7 @@ export default function Direccion() {
             </div>
           </div> */}
           
-          <div className="flex items-start">
+          {/* <div className="flex items-start">
             <div className="flex-shrink-0 bg-orange-100 p-2 rounded-lg">
               <svg className="h-6 w-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -59,7 +59,7 @@ export default function Direccion() {
               <p className="mt-1 text-gray-600">Lunes a Viernes: 9:00 - 18:00</p>
               <p className="text-gray-600">Sábados: 10:00 - 14:00</p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       
