@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaCamera } from "react-icons/fa";
+import { FaCamera, FaTag, FaVenusMars, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import Image from "next/image";
 import ConejoModal from "./ConejoModal";
 
@@ -43,19 +43,20 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
       setModalOpen(true);
     }
   };
-const formatoCLP = (valor: number) =>
-  new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(valor);
+
+  const formatoCLP = (valor: number) =>
+    new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(valor);
   // Precio con decuento
   const precioDes = 0.15 * conejo.precio;
   const precioConDescuento:number  = conejo.tieneDescuento ? (conejo.precio - precioDes): (conejo.precio);
 
   return (
-    <div className={`bg-white rounded-xl shadow-md p-4 flex flex-col items-center hover:shadow-lg transition-shadow ${
+    <div className={`bg-white rounded-xl shadow-md flex flex-col items-center hover:shadow-lg transition-shadow ${
       !isDisponible ? 'opacity-60' : ''
     }`}>
-      <div className="relative">
+      <div className="relative w-full">
         <div 
-          className={`relative w-40 h-40 mb-4 cursor-pointer transition-transform hover:scale-105 ${
+          className={`relative w-full h-72 cursor-pointer transition-transform hover:scale-105 ${
             !isDisponible ? 'cursor-not-allowed' : ''
           }`}
           onClick={openPhotoModal}
@@ -64,10 +65,10 @@ const formatoCLP = (valor: number) =>
             src={conejo.fotoPrincipal}
             alt={`Foto principal de ${conejo.id}`}
             fill
-            className={`object-cover rounded-lg border ${
+            className={`object-cover ${
               !isDisponible ? 'grayscale' : ''
             }`}
-            sizes="160px"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             priority={false}
             loading="lazy"
           />
@@ -90,44 +91,59 @@ const formatoCLP = (valor: number) =>
           </div>
         )}
       </div>
-      <div className="w-full text-center">
-        <h2 className="text-xl font-semibold mb-1">{conejo.id}</h2>
-        <p className="text-gray-600 mb-1">Raza: <span className="font-medium">{conejo.raza}</span></p>
-        <p className="text-gray-600 mb-1">Sexo: <span className="font-medium">{conejo.sexo}</span></p>
-        <p className="text-gray-600 mb-2">Nacimiento: <span className="font-medium">{conejo.fechaNacimiento}</span></p>
-       <div className="mb-2 flex flex-col items-center">
-  {conejo.tieneDescuento ? (
-    <>
-      <div className="flex items-center gap-2 mb-1">
-         <span className="bg-blue-300 text-blue-600 px-2 py-1 rounded-xl text-xs">
-          -15%
-        </span>
-        <span className="text-red-500 line-through text-sm">
-          {formatoCLP(conejo.precio)}
-        </span>
-       
-      </div>
-      <p className="text-green-600 font-bold text-lg">
-        {formatoCLP(precioConDescuento)}
-      </p>
-    </>
-  ) : (
-    <p className="text-green-600 font-bold text-lg">
-      <span className="font-bold">{formatoCLP(conejo.precio)}</span>
-    </p>
-  )}
-</div>
+      <div className="w-full text-center p-4">
+        <h2 className="text-2xl font-bold text-gray-800 mb-3 tracking-wide">{conejo.id}</h2>
+        
+        <div className="space-y-3 mb-4">
+          <div className="flex items-center justify-center space-x-2">
+            <FaMapMarkerAlt className="text-blue-500 text-sm" />
+            <p className="text-gray-700 font-medium">Raza: <span className="font-semibold text-gray-900">{conejo.raza}</span></p>
+          </div>
+          
+          <div className="flex items-center justify-center space-x-2">
+            <FaVenusMars className="text-pink-500 text-sm" />
+            <p className="text-gray-700 font-medium">Sexo: <span className="font-semibold text-gray-900">{conejo.sexo}</span></p>
+          </div>
+          
+          <div className="flex items-center justify-center space-x-2">
+            <FaCalendarAlt className="text-green-500 text-sm" />
+            <p className="text-gray-700 font-medium">Nacimiento: <span className="font-semibold text-gray-900">{conejo.fechaNacimiento}</span></p>
+          </div>
+        </div>
+
+        <div className="mb-4 flex flex-col items-center">
+          {conejo.tieneDescuento ? (
+            <>
+              <div className="flex items-center gap-2 mb-2">
+                <FaTag className="text-orange-500 text-sm" />
+                <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">
+                  -15%
+                </span>
+                <span className="text-gray-400 line-through text-sm">
+                  {formatoCLP(conejo.precio)}
+                </span>
+              </div>
+              <p className="text-2xl font-bold text-green-600">
+                {formatoCLP(precioConDescuento)}
+              </p>
+            </>
+          ) : (
+            <p className="text-2xl font-bold text-green-600">
+              {formatoCLP(conejo.precio)}
+            </p>
+          )}
+        </div>
         
         <button
-          className={`mt-2 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors mx-auto ${
+          className={`mt-2 px-4 py-2 rounded-4xl flex items-center gap-2 transition-all duration-300 mx-auto font-bold text-base border-b-[8px] border-t-[1px] border-x-[3px] ${
             isDisponible 
-              ? 'bg-blue-500 text-white hover:bg-blue-600' 
-              : 'bg-gray-400 text-white cursor-not-allowed'
+              ? 'bg-yellow-400 text-black border-gray-800 hover:bg-yellow-300 hover:shadow-lg transform hover:scale-105' 
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400'
           }`}
           onClick={() => isDisponible && setModalOpen(true)}
           disabled={!isDisponible}
         >
-          <FaCamera /> {isDisponible ? 'Ver más fotos' : 'No disponible'}
+          <FaCamera className="text-sm" /> {isDisponible ? 'Ver más fotos' : 'No disponible'}
         </button>
       </div>
       {modalOpen && isDisponible && (

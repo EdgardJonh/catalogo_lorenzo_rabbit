@@ -16,7 +16,7 @@ export default function ConejoModal({ fotos, onClose, id }: { fotos: string[]; o
   
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50"
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-xl shadow-xl p-6 relative max-w-lg w-full mx-4">
