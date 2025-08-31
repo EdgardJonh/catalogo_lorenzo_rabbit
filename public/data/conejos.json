@@ -303,6 +303,76 @@
       "/images/conejos/Mariposa/Conejo6/DSC_0350.webp",
       "/images/conejos/Mariposa/Conejo6/DSC_0351.webp"
     ]
+  },
+  {
+    "id": "C122",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "precio": 30000,
+    "tieneDescuento": false,
+    "fechaNacimiento": "14-06-2025",
+    "disponibilidad": "Disponible",
+    "fotoPrincipal": "/images/conejos/whiteBunny/conejo1/DSC_0001.jpeg",
+    "fotosAdicionales": [
+      "/images/conejos/whiteBunny/conejo1/DSC_0002.jpeg",
+      "/images/conejos/whiteBunny/conejo1/DSC_0003.jpeg"
+    ]
+  },
+  {
+    "id": "C123",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "precio": 30000,
+    "tieneDescuento": false,
+    "fechaNacimiento": "14-06-2025",
+    "disponibilidad": "Disponible",
+    "fotoPrincipal": "/images/conejos/whiteBunny/conejo2/DSC_0001.jpeg",
+    "fotosAdicionales": [
+      "/images/conejos/whiteBunny/conejo2/DSC_0002.jpeg",
+      "/images/conejos/whiteBunny/conejo2/DSC_0003.jpeg"
+    ]
+  },
+  {
+    "id": "C124",
+    "raza": "Mini Lop",
+    "sexo": "Hembra",
+    "precio": 30000,
+    "tieneDescuento": false,
+    "fechaNacimiento": "14-06-2025",
+    "disponibilidad": "Disponible",
+    "fotoPrincipal": "/images/conejos/whiteBunny/conejo3/DSC_0001.jpeg",
+    "fotosAdicionales": [
+      "/images/conejos/whiteBunny/conejo3/DSC_0002.jpeg",
+      "/images/conejos/whiteBunny/conejo3/DSC_0003.jpeg"
+    ]
+  },
+  {
+    "id": "C125",
+    "raza": "Mini Lop",
+    "sexo": "Hembra",
+    "precio": 30000,
+    "tieneDescuento": false,
+    "fechaNacimiento": "14-06-2025",
+    "disponibilidad": "Disponible",
+    "fotoPrincipal": "/images/conejos/whiteBunny/conejo4/DSC_0001.jpeg",
+    "fotosAdicionales": [
+      "/images/conejos/whiteBunny/conejo4/DSC_0002.jpeg",
+      "/images/conejos/whiteBunny/conejo4/DSC_0003.jpeg"
+    ]
+  },
+  {
+    "id": "C126",
+    "raza": "Mini Lop",
+    "sexo": "Macho",
+    "precio": 30000,
+    "tieneDescuento": false,
+    "fechaNacimiento": "14-06-2025",
+    "disponibilidad": "Disponible",
+    "fotoPrincipal": "/images/conejos/whiteBunny/conejo5/DSC_0001.jpeg",
+    "fotosAdicionales": [
+      "/images/conejos/whiteBunny/conejo5/DSC_0002.jpeg",
+      "/images/conejos/whiteBunny/conejo5/DSC_0003.jpeg"
+    ]
   }
 
 ] 
