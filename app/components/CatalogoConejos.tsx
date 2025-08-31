@@ -81,7 +81,7 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
      
       {/* Nueva Camada Disponible */}
       {nuevaCamada.length > 0 && (
-        <div className="mb-12">
+        <div className="mb-12 bg-gradient-to-r from-green-900/20 to-emerald-800/20 rounded-xl p-8 border border-green-500/30">
           <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-green-400 mb-6 text-center`}>
             🐰 Nueva Camada Disponible 🐰
           </h3>
