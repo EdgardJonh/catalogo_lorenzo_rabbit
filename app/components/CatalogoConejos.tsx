@@ -32,6 +32,9 @@ interface CatalogoConejosProps {
   });
 
 export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
+  // Separar conejitos por fecha de nacimiento
+  const nuevaCamada = conejos.filter(conejo => conejo.fechaNacimiento === "14-06-2025");
+  const restoConejos = conejos.filter(conejo => conejo.fechaNacimiento !== "14-06-2025");
 
   return (
     <section>
@@ -76,12 +79,34 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
          
          </div>
      
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {conejos.map((conejo) => (
-          <ConejoCard key={conejo.id} conejo={conejo} />
-        ))}
-        
-      </div>
+      {/* Nueva Camada Disponible */}
+      {nuevaCamada.length > 0 && (
+        <div className="mb-12">
+          <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-green-400 mb-6 text-center`}>
+            🐰 Nueva Camada Disponible 🐰
+          </h3>
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {nuevaCamada.map((conejo) => (
+              <ConejoCard key={conejo.id} conejo={conejo} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Resto de Conejos */}
+      {restoConejos.length > 0 && (
+        <div>
+          <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-gray-50 mb-6 text-center`}>
+            Otros Conejitos Disponibles
+          </h3>
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {restoConejos.map((conejo) => (
+              <ConejoCard key={conejo.id} conejo={conejo} />
+            ))}
+          </div>
+        </div>
+      )}
+      
       <div className="text-center mt-12">
         <VisitUs />
       </div>
