@@ -47,7 +47,7 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
   const formatoCLP = (valor: number) =>
     new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(valor);
   // Precio con decuento
-  const precioDes = 0.15 * conejo.precio;
+  const precioDes = 0.30 * conejo.precio;
   const precioConDescuento:number  = conejo.tieneDescuento ? (conejo.precio - precioDes): (conejo.precio);
 
   return (
@@ -75,7 +75,7 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
         </div>
         {conejo.tieneDescuento && (
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-xl text-xs">
-            -15%
+            -30%
           </div>
         )}
         <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold ${
@@ -117,7 +117,7 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
               <div className="flex items-center gap-2 mb-2">
                 <FaTag className="text-orange-500 text-sm" />
                 <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">
-                  -15%
+                  -30%
                 </span>
                 <span className="text-gray-400 line-through text-sm">
                   {formatoCLP(conejo.precio)}
