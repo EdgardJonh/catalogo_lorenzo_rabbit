@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaCamera, FaTag, FaVenusMars, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { FaCamera, FaTag, FaVenusMars, FaCalendarAlt, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa";
 import Image from "next/image";
 import ConejoModal from "./ConejoModal";
 
@@ -41,6 +41,40 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
   const openPhotoModal = () => {
     if (isDisponible) {
       setModalOpen(true);
+    }
+  };
+
+  const handleReservar = () => {
+    if (!isDisponible) return;
+    
+    const confirmacion = `¿Usted a seleccionado el conejito ${conejo.id}? Está seguro de hacer la reserva?
+
+🐰 *Conejito seleccionado:*
+• ID: ${conejo.id}
+• Raza: ${conejo.raza}
+• Precio: ${formatoCLP(precioConDescuento)}
+• Fecha de nacimiento: ${conejo.fechaNacimiento}
+• Disponibilidad: ${conejo.disponibilidad}
+
+Al confirmar, se abrirá WhatsApp para completar la reserva.`;
+
+    if (window.confirm(confirmacion)) {
+      const mensaje = `¡Hola! Me interesa reservar el conejito ${conejo.id} 🐰
+
+📋 *Información del conejito:*
+• ID: ${conejo.id}
+• Raza: ${conejo.raza}
+• Sexo: ${conejo.sexo}
+• Fecha de nacimiento: ${conejo.fechaNacimiento}
+• Precio: ${formatoCLP(precioConDescuento)}
+• Disponibilidad: ${conejo.disponibilidad}
+
+¿Está disponible para reserva? ¡Gracias! 😊`;
+
+      const numeroWhatsApp = "+56992977211"; // Reemplaza con el número real
+      const urlWhatsApp = `https://wa.me/${numeroWhatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(mensaje)}`;
+      
+      window.open(urlWhatsApp, '_blank');
     }
   };
 
@@ -134,17 +168,31 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
           )}
         </div>
         
-        <button
-          className={`mt-2 px-4 py-2 rounded-4xl flex items-center gap-2 transition-all duration-300 mx-auto font-bold text-base border-b-[8px] border-t-[1px] border-x-[3px] ${
-            isDisponible 
-              ? 'bg-yellow-400 text-black border-gray-800 hover:bg-yellow-300 hover:shadow-lg transform hover:scale-105' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400'
-          }`}
-          onClick={() => isDisponible && setModalOpen(true)}
-          disabled={!isDisponible}
-        >
-          <FaCamera className="text-sm" /> {isDisponible ? 'Ver más fotos' : 'No disponible'}
-        </button>
+        <div className="flex flex-col gap-3 mt-2">
+          <button
+            className={`px-4 py-2 rounded-4xl flex items-center gap-2 transition-all duration-300 mx-auto font-bold text-base border-b-[8px] border-t-[1px] border-x-[3px] ${
+              isDisponible 
+                ? 'bg-yellow-400 text-black border-gray-800 hover:bg-yellow-300 hover:shadow-lg transform hover:scale-105' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400'
+            }`}
+            onClick={() => isDisponible && setModalOpen(true)}
+            disabled={!isDisponible}
+          >
+            <FaCamera className="text-sm" /> {isDisponible ? 'Ver más fotos' : 'No disponible'}
+          </button>
+          
+          <button
+            className={`px-4 py-2 rounded-4xl flex items-center gap-2 transition-all duration-300 mx-auto font-bold text-base border-b-[8px] border-t-[1px] border-x-[3px] ${
+              isDisponible 
+                ? 'bg-violet-500 text-white border-violet-700 hover:bg-violet-600 hover:shadow-lg transform hover:scale-105' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-400'
+            }`}
+            onClick={handleReservar}
+            disabled={!isDisponible}
+          >
+            <FaWhatsapp className="text-sm" /> {isDisponible ? 'Reservar' : 'No disponible'}
+          </button>
+        </div>
       </div>
       {modalOpen && isDisponible && (
         <ConejoModal
