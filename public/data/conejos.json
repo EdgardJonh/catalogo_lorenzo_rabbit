@@ -325,7 +325,7 @@
     "precio": 30000,
     "tieneDescuento": false,
     "fechaNacimiento": "14-06-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/whiteBunny/conejo2/DSC_0001.jpeg",
     "fotosAdicionales": [
       "/images/conejos/whiteBunny/conejo2/DSC_0002.jpeg",
@@ -339,7 +339,7 @@
     "precio": 30000,
     "tieneDescuento": false,
     "fechaNacimiento": "14-06-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/whiteBunny/conejo3/DSC_0001.jpeg",
     "fotosAdicionales": [
       "/images/conejos/whiteBunny/conejo3/DSC_0002.jpeg",
