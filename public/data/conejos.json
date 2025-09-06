@@ -97,7 +97,7 @@
     "precio": 30000,
     "tieneDescuento": false,
     "fechaNacimiento": "08-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/Lola/Conejo1/DSC_0317.webp",
     "fotosAdicionales": [
       "/images/conejos/Lola/Conejo1/DSC_0315.webp",
