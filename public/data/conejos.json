@@ -159,7 +159,7 @@
     "precio": 35714,
     "tieneDescuento": true,
     "fechaNacimiento": "22-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo3/DSC_0300.webp",
     "fotosAdicionales": [
       "/images/conejos/CafeMiniLoop/Conejo3/DSC_0399.webp",
@@ -353,7 +353,7 @@
     "precio": 30000,
     "tieneDescuento": false,
     "fechaNacimiento": "14-06-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/whiteBunny/conejo4/DSC_0001.jpeg",
     "fotosAdicionales": [
       "/images/conejos/whiteBunny/conejo4/DSC_0002.jpeg",
