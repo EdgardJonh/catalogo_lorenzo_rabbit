@@ -268,7 +268,7 @@
     "precio": 30000,
     "tieneDescuento": false,
     "fechaNacimiento": "22-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/Mariposa/Conejo4/DSC_0341.webp",
     "fotosAdicionales": [
       "/images/conejos/Mariposa/Conejo4/DSC_0342.webp",
