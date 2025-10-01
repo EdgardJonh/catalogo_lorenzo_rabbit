@@ -140,11 +140,11 @@
   {
     "id": "C111",
     "raza": "Mini Lop",
-    "sexo": "Macho",
+    "sexo": "Hembra",
     "precio": 30000,
     "tieneDescuento": true,
     "fechaNacimiento": "22-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo2/DSC_0304.webp",
     "fotosAdicionales": [
       "/images/conejos/CafeMiniLoop/Conejo2/DSC_0305.webp",
@@ -191,7 +191,7 @@
     "precio": 30000,
     "tieneDescuento": true,
     "fechaNacimiento": "22-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo5/DSC_0287.webp",
     "fotosAdicionales": [
       "/images/conejos/CafeMiniLoop/Conejo5/DSC_0288.webp",
