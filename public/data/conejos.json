@@ -81,7 +81,7 @@
     "precio": 30000,
     "tieneDescuento": true,
     "fechaNacimiento": "07-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/BlackFire/Conejo6/DSC_0278.webp",
     "fotosAdicionales": [
       "/images/conejos/BlackFire/Conejo6/DSC_0279.webp",
@@ -191,7 +191,7 @@
     "precio": 30000,
     "tieneDescuento": true,
     "fechaNacimiento": "22-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/CafeMiniLoop/Conejo5/DSC_0287.webp",
     "fotosAdicionales": [
       "/images/conejos/CafeMiniLoop/Conejo5/DSC_0288.webp",
