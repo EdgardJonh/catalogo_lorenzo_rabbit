@@ -36,7 +36,7 @@
     "precio": 30000,
     "tieneDescuento": true,
     "fechaNacimiento": "07-05-2025",
-    "disponibilidad": "Disponible",
+    "disponibilidad": "no Disponible",
     "fotoPrincipal": "/images/conejos/BlackFire/Conejo3/DSC_0266.webp",
     "fotosAdicionales": [
       "/images/conejos/BlackFire/Conejo3/DSC_0267.webp",
