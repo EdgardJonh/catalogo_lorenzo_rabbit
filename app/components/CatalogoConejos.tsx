@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import ConejoCard from "./ConejoCard";
 import Image from "next/image";
 import { Luckiest_Guy, Roboto } from "next/font/google";
@@ -6,6 +7,7 @@ import VisitUs from "./VisitUs";
 import styles  from "../styles/home.module.css";
 // import Festividad from "./Festividad";
 import Direccion from "./Direccion";
+import CatalogoMenu from "./CatalogoMenu";
 
 interface Conejo {
   id: string;
@@ -17,6 +19,7 @@ interface Conejo {
   disponibilidad: string;
   fotoPrincipal: string;
   fotosAdicionales: string[];
+  reproductor: boolean;
 }
 
 interface CatalogoConejosProps {
@@ -31,10 +34,29 @@ interface CatalogoConejosProps {
     weight: ["400", "500", "700"]
   });
 
+type SeccionCatalogo = "todos" | "reproductores" | "nueva-camada" | "otros";
+
 export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
-  // Separar conejitos por fecha de nacimiento
-  const nuevaCamada = conejos.filter(conejo => conejo.fechaNacimiento === "14-06-2025");
-  const restoConejos = conejos.filter(conejo => conejo.fechaNacimiento !== "14-06-2025");
+  const [seccionActiva, setSeccionActiva] = useState<SeccionCatalogo>("todos");
+
+  // Separar conejitos: reproductores, nueva camada y resto
+  const reproductores = conejos.filter(conejo => conejo.reproductor === true);
+  const conejosVenta = conejos.filter(conejo => conejo.reproductor === false);
+  const nuevaCamada = conejosVenta.filter(conejo => conejo.fechaNacimiento === "14-06-2025");
+  const restoConejos = conejosVenta.filter(conejo => conejo.fechaNacimiento !== "14-06-2025");
+
+  // Contadores para el menú
+  const contadores = {
+    todos: conejos.length,
+    reproductores: reproductores.length,
+    nuevaCamada: nuevaCamada.length,
+    otros: restoConejos.length,
+  };
+
+  // Determinar qué secciones mostrar según la selección
+  const mostrarReproductores = seccionActiva === "todos" || seccionActiva === "reproductores";
+  const mostrarNuevaCamada = seccionActiva === "todos" || seccionActiva === "nueva-camada";
+  const mostrarOtros = seccionActiva === "todos" || seccionActiva === "otros";
 
   return (
     <section>
@@ -78,9 +100,35 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
          <Direccion />
          
          </div>
+
+      {/* Menú de Navegación */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+        <CatalogoMenu
+          seccionActiva={seccionActiva}
+          onSeccionChange={setSeccionActiva}
+          contadores={contadores}
+        />
+      </div>
      
+      {/* Conejitos Reproductores */}
+      {mostrarReproductores && reproductores.length > 0 && (
+        <div className="mb-12 bg-gradient-to-r from-purple-900/20 to-indigo-800/20 rounded-xl p-8 border border-purple-500/40">
+          <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-purple-400 mb-6 text-center`}>
+            🐇 Conejitos Reproductores 🐇
+          </h3>
+          <p className="text-center text-gray-300 mb-6 text-sm md:text-base">
+            Nuestros reproductores de excelente calidad genética
+          </p>
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {reproductores.map((conejo) => (
+              <ConejoCard key={conejo.id} conejo={conejo} />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Nueva Camada Disponible */}
-      {nuevaCamada.length > 0 && (
+      {mostrarNuevaCamada && nuevaCamada.length > 0 && (
         <div className="mb-12 bg-gradient-to-r from-green-900/20 to-emerald-800/20 rounded-xl p-8 border border-green-500/40">
           <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-green-400 mb-6 text-center`}>
             🐰 Nueva Camada Disponible 🐰
@@ -94,7 +142,7 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
       )}
 
       {/* Resto de Conejos */}
-      {restoConejos.length > 0 && (
+      {mostrarOtros && restoConejos.length > 0 && (
         <div>
           <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-gray-50 mb-6 text-center`}>
             Otros Conejitos Disponibles

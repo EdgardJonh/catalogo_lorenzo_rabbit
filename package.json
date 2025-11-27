@@ -6,10 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate": "tsx scripts/migrate-to-supabase.ts"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.6",
+    "@supabase/supabase-js": "^2.39.3",
+    "dotenv": "^16.4.5",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -21,6 +24,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.7.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

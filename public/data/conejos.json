@@ -12,7 +12,8 @@
       "/images/conejos/BlackFire/Conejo1/DSC_0256.webp",
       "/images/conejos/BlackFire/Conejo1/DSC_0257.webp",
       "/images/conejos/BlackFire/Conejo1/DSC_0258.webp"
-    ]
+    ],
+    "reproductor": true
   },
   {
     "id": "C103",
@@ -27,7 +28,8 @@
       "/images/conejos/BlackFire/Conejo2/DSC_0263.webp",
       "/images/conejos/BlackFire/Conejo2/DSC_0264.webp",
       "/images/conejos/BlackFire/Conejo2/DSC_0265.webp"
-    ]
+    ],
+    "reproductor": true
   },
   {
     "id": "C104",
@@ -41,7 +43,8 @@
     "fotosAdicionales": [
       "/images/conejos/BlackFire/Conejo3/DSC_0267.webp",
       "/images/conejos/BlackFire/Conejo3/DSC_0268.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C105",
@@ -57,7 +60,8 @@
       "/images/conejos/BlackFire/Conejo4/DSC_0271.webp",
       "/images/conejos/BlackFire/Conejo4/DSC_0272.webp",
       "/images/conejos/BlackFire/Conejo4/DSC_0273.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C106",
@@ -72,7 +76,8 @@
       "/images/conejos/BlackFire/Conejo5/DSC_0275.webp",
       "/images/conejos/BlackFire/Conejo5/DSC_0276.webp",
       "/images/conejos/BlackFire/Conejo5/DSC_0277.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C107",
@@ -88,7 +93,8 @@
       "/images/conejos/BlackFire/Conejo6/DSC_0280.webp",
       "/images/conejos/BlackFire/Conejo6/DSC_0281.webp",
       "/images/conejos/BlackFire/Conejo6/DSC_0282.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C108",
@@ -104,7 +110,8 @@
       "/images/conejos/Lola/Conejo1/DSC_0316.webp",
       "/images/conejos/Lola/Conejo1/DSC_0314.webp",
       "/images/conejos/Lola/Conejo1/DSC_0318.webp"
-    ]
+    ],
+    "reproductor": true
   },
   {
     "id": "C109",
@@ -118,7 +125,8 @@
     "fotosAdicionales": [
       "/images/conejos/Lola/Conejo2/DSC_0320.webp",
       "/images/conejos/Lola/Conejo2/DSC_0321.webp"
-    ]
+    ],
+    "reproductor": true
   },
   {
     "id": "C110",
@@ -135,7 +143,8 @@
       "/images/conejos/CafeMiniLoop/Conejo1/DSC_0311.webp",
       "/images/conejos/CafeMiniLoop/Conejo1/DSC_0312.webp",
       "/images/conejos/CafeMiniLoop/Conejo1/DSC_0313.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C111",
@@ -150,7 +159,8 @@
       "/images/conejos/CafeMiniLoop/Conejo2/DSC_0305.webp",
       "/images/conejos/CafeMiniLoop/Conejo2/DSC_0306.webp",
       "/images/conejos/CafeMiniLoop/Conejo2/DSC_0307.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C112",
@@ -166,7 +176,8 @@
       "/images/conejos/CafeMiniLoop/Conejo3/DSC_0301.webp",
       "/images/conejos/CafeMiniLoop/Conejo3/DSC_0302.webp",
       "/images/conejos/CafeMiniLoop/Conejo3/DSC_0303.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C113",
@@ -182,7 +193,8 @@
       "/images/conejos/CafeMiniLoop/Conejo4/DSC_0294.webp",
       "/images/conejos/CafeMiniLoop/Conejo4/DSC_0295.webp",
       "/images/conejos/CafeMiniLoop/Conejo4/DSC_0296.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C114",
@@ -197,8 +209,8 @@
       "/images/conejos/CafeMiniLoop/Conejo5/DSC_0288.webp",
       "/images/conejos/CafeMiniLoop/Conejo5/DSC_0289.webp",
       "/images/conejos/CafeMiniLoop/Conejo5/DSC_0290.webp"
-     
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C115",
@@ -213,7 +225,8 @@
       "/images/conejos/CafeMiniLoop/Conejo6/DSC_0284.webp",
       "/images/conejos/CafeMiniLoop/Conejo6/DSC_0285.webp",
       "/images/conejos/CafeMiniLoop/Conejo6/DSC_0286.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C116",
@@ -229,7 +242,8 @@
       "/images/conejos/Mariposa/Conejo1/DSC_0329.webp",
       "/images/conejos/Mariposa/Conejo1/DSC_0330.webp",
       "/images/conejos/Mariposa/Conejo1/DSC_0331.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C117",
@@ -244,7 +258,8 @@
       "/images/conejos/Mariposa/Conejo2/DSC_0334.webp",
       "/images/conejos/Mariposa/Conejo2/DSC_0335.webp",
       "/images/conejos/Mariposa/Conejo2/DSC_0336.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C118",
@@ -259,7 +274,8 @@
       "/images/conejos/Mariposa/Conejo3/DSC_0338.webp",
       "/images/conejos/Mariposa/Conejo3/DSC_0339.webp",
       "/images/conejos/Mariposa/Conejo3/DSC_0340.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C119",
@@ -274,7 +290,8 @@
       "/images/conejos/Mariposa/Conejo4/DSC_0342.webp",
       "/images/conejos/Mariposa/Conejo4/DSC_0343.webp",
       "/images/conejos/Mariposa/Conejo4/DSC_0344.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C120",
@@ -288,7 +305,8 @@
     "fotosAdicionales": [
       "/images/conejos/Mariposa/Conejo5/DSC_0347.webp",
       "/images/conejos/Mariposa/Conejo5/DSC_0348.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C121",
@@ -302,7 +320,8 @@
     "fotosAdicionales": [
       "/images/conejos/Mariposa/Conejo6/DSC_0350.webp",
       "/images/conejos/Mariposa/Conejo6/DSC_0351.webp"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C122",
@@ -316,7 +335,8 @@
     "fotosAdicionales": [
       "/images/conejos/whiteBunny/conejo1/DSC_0002.jpeg",
       "/images/conejos/whiteBunny/conejo1/DSC_0003.jpeg"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C123",
@@ -330,7 +350,8 @@
     "fotosAdicionales": [
       "/images/conejos/whiteBunny/conejo2/DSC_0002.jpeg",
       "/images/conejos/whiteBunny/conejo2/DSC_0003.jpeg"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C124",
@@ -344,7 +365,8 @@
     "fotosAdicionales": [
       "/images/conejos/whiteBunny/conejo3/DSC_0002.jpeg",
       "/images/conejos/whiteBunny/conejo3/DSC_0003.jpeg"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C125",
@@ -358,7 +380,8 @@
     "fotosAdicionales": [
       "/images/conejos/whiteBunny/conejo4/DSC_0002.jpeg",
       "/images/conejos/whiteBunny/conejo4/DSC_0003.jpeg"
-    ]
+    ],
+    "reproductor": false
   },
   {
     "id": "C126",
@@ -372,7 +395,8 @@
     "fotosAdicionales": [
       "/images/conejos/whiteBunny/conejo5/DSC_0002.jpeg",
       "/images/conejos/whiteBunny/conejo5/DSC_0003.jpeg"
-    ]
+    ],
+    "reproductor": false
   }
 
 ] 

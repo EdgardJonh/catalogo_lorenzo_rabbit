@@ -14,6 +14,7 @@ interface Conejo {
   disponibilidad: string;
   fotoPrincipal: string;
   fotosAdicionales: string[];
+  reproductor: boolean;
 }
 
 export default function ConejoCard({ conejo }: { conejo: Conejo }) {
@@ -105,6 +106,7 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
             priority={false}
             loading="lazy"
+            unoptimized
           />
         </div>
         {conejo.tieneDescuento && (
