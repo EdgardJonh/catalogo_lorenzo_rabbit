@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Conejo, mapConejoDBToConejo } from "../../lib/supabase";
 import { createSupabaseBrowserClient } from "../../lib/supabaseBrowser";
 import AdminConejoForm from "./components/AdminConejoForm";
@@ -7,8 +7,11 @@ import AdminConejoList from "./components/AdminConejoList";
 import AdminAuth from "./components/AdminAuth";
 import { FaLock, FaUnlock } from "react-icons/fa";
 
+// Forzar renderizado dinámico (no prerenderizar)
+export const dynamic = 'force-dynamic';
+
 export default function AdminPage() {
-  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const [supabase, setSupabase] = useState<ReturnType<typeof createSupabaseBrowserClient> | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [conejos, setConejos] = useState<Conejo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,8 +19,20 @@ export default function AdminPage() {
   const [editingConejo, setEditingConejo] = useState<Conejo | null>(null);
   const [initializing, setInitializing] = useState(true);
 
+  // Crear cliente solo en el cliente (después del mount)
+  useEffect(() => {
+    try {
+      const client = createSupabaseBrowserClient();
+      setSupabase(client);
+    } catch (error) {
+      console.error('Error creating Supabase client:', error);
+      setInitializing(false);
+    }
+  }, []);
+
   // Cargar conejos (todos, incluyendo no visibles para admin)
   const loadConejos = async () => {
+    if (!supabase) return;
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -43,6 +58,8 @@ export default function AdminPage() {
 
   // Verificar autenticación al cargar
   useEffect(() => {
+    if (!supabase) return;
+
     const initAuth = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
@@ -74,6 +91,9 @@ export default function AdminPage() {
   }, [supabase]);
 
   const handleAuth = async (email: string, password: string) => {
+    if (!supabase) {
+      throw new Error("Supabase client not initialized");
+    }
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -88,7 +108,9 @@ export default function AdminPage() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setConejos([]);
-    supabase.auth.signOut();
+    if (supabase) {
+      supabase.auth.signOut();
+    }
   };
 
   // CRUD Operations
