@@ -7,7 +7,13 @@ export function createSupabaseBrowserClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error("Supabase credentials not configured");
+    const missing = [];
+    if (!supabaseUrl) missing.push('NEXT_PUBLIC_SUPABASE_URL');
+    if (!supabaseAnonKey) missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+    throw new Error(
+      `Supabase credentials not configured. Missing: ${missing.join(', ')}. ` +
+      `Please configure these environment variables in Vercel.`
+    );
   }
 
   return createClient(supabaseUrl, supabaseAnonKey, {

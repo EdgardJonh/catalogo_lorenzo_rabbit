@@ -24,8 +24,9 @@ export default function AdminPage() {
     try {
       const client = createSupabaseBrowserClient();
       setSupabase(client);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating Supabase client:', error);
+      // No mostrar alert aquí, se mostrará en la UI
       setInitializing(false);
     }
   }, []);
@@ -166,10 +167,42 @@ export default function AdminPage() {
     setEditingConejo(null);
   };
 
-  if (initializing) {
+  if (initializing && supabase) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 flex items-center justify-center">
-        <p className="text-white text-lg">Cargando...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Inicializando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!supabase) {
+    return (
+      <div className="min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 flex items-center justify-center p-4">
+        <div className="bg-red-500/20 backdrop-blur-md rounded-xl p-8 border border-red-500/50 max-w-md w-full text-center">
+          <div className="text-red-400 text-5xl mb-4">⚠️</div>
+          <h1 className="text-2xl font-bold text-white mb-4">
+            Error de Configuración
+          </h1>
+          <p className="text-red-200 mb-4">
+            No se pudo inicializar el cliente de Supabase.
+          </p>
+          <div className="bg-black/30 rounded-lg p-4 text-left text-sm text-gray-300">
+            <p className="mb-2 font-semibold">Posibles causas:</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>Las variables de entorno no están configuradas en Vercel</li>
+              <li>Las variables tienen nombres incorrectos</li>
+              <li>Necesitas redesplegar después de agregar las variables</li>
+            </ul>
+            <p className="mt-4 font-semibold">Variables requeridas:</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li><code className="bg-black/50 px-1 rounded">NEXT_PUBLIC_SUPABASE_URL</code></li>
+              <li><code className="bg-black/50 px-1 rounded">NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
+            </ul>
+          </div>
+        </div>
       </div>
     );
   }
