@@ -35,17 +35,27 @@ export interface Conejo {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Verificar que las variables de entorno estén configuradas
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('⚠️ Supabase credentials not found. Using fallback to JSON file.');
+// Función para obtener el cliente de Supabase (lazy initialization)
+function getSupabaseClient() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+  
+  try {
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+      },
+    });
+  } catch (error) {
+    console.error('Error creating Supabase client:', error);
+    return null;
+  }
 }
 
-// Cliente de Supabase
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: false,
-  },
-});
+// Cliente de Supabase (solo se crea si hay credenciales)
+// Puede ser null si las credenciales no están configuradas
+export const supabase = getSupabaseClient();
 
 // Función para mapear datos de DB a formato de la app
 export function mapConejoDBToConejo(conejoDB: ConejoDB): Conejo {
@@ -76,12 +86,13 @@ export function mapConejoDBToConejo(conejoDB: ConejoDB): Conejo {
 export async function getConejos(): Promise<Conejo[]> {
   // Si no hay credenciales de Supabase, retornar array vacío
   // El código usará el fallback al JSON
-  if (!supabaseUrl || !supabaseAnonKey) {
+  const client = getSupabaseClient();
+  if (!client) {
     return [];
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('conejos')
       .select('*')
       .eq('visible', true) // Solo conejos visibles en el catálogo público
@@ -101,12 +112,13 @@ export async function getConejos(): Promise<Conejo[]> {
 
 // Función para obtener todos los conejos (incluyendo no visibles) - para admin
 export async function getConejosAdmin(): Promise<Conejo[]> {
-  if (!supabaseUrl || !supabaseAnonKey) {
+  const client = getSupabaseClient();
+  if (!client) {
     return [];
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('conejos')
       .select('*')
       .order('created_at', { ascending: false });
@@ -125,12 +137,13 @@ export async function getConejosAdmin(): Promise<Conejo[]> {
 
 // Función para obtener un conejo por ID
 export async function getConejoById(id: string): Promise<Conejo | null> {
-  if (!supabaseUrl || !supabaseAnonKey) {
+  const client = getSupabaseClient();
+  if (!client) {
     return null;
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('conejos')
       .select('*')
       .eq('id', id)
