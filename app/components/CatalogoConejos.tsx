@@ -172,6 +172,24 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
           contadores={contadores}
         />
       </div>
+
+      {/* Mensaje cuando no hay conejos disponibles */}
+      {conejos.length === 0 && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <div className="bg-gradient-to-r from-purple-900/30 to-indigo-800/30 rounded-xl p-12 border border-purple-500/40 text-center">
+            <div className="text-6xl mb-6">🐰</div>
+            <h3 className={`${luckiestGuy.className} text-3xl md:text-4xl font-bold text-purple-400 mb-4`}>
+              ¡Hola!
+            </h3>
+            <p className="text-xl md:text-2xl text-gray-300 mb-2">
+              Gracias por estar aquí
+            </p>
+            <p className="text-lg md:text-xl text-gray-400">
+              Por el momento no tenemos conejitos disponibles, ¡regresa pronto!
+            </p>
+          </div>
+        </div>
+      )}
      
       {/* Conejitos Reproductores */}
       {mostrarReproductores && reproductores.length > 0 && (
