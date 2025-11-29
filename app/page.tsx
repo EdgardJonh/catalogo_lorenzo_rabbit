@@ -3,6 +3,10 @@ import CatalogoConejos from "./components/CatalogoConejos";
 import conejosData from "../public/data/conejos.json";
 import { getConejos } from "../lib/supabase";
 
+// Forzar renderizado dinámico (sin caché) para que siempre muestre datos frescos
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Tipos
 interface Conejo {
   id: string;
