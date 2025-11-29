@@ -7,6 +7,7 @@ export interface ConejoDB {
   sexo: string;
   precio: number;
   tiene_descuento: boolean;
+  porcentaje_descuento?: number;
   fecha_nacimiento: string;
   disponibilidad: string;
   foto_principal: string;
@@ -24,6 +25,7 @@ export interface Conejo {
   sexo: string;
   precio: number;
   tieneDescuento: boolean;
+  porcentajeDescuento?: number;
   fechaNacimiento: string;
   disponibilidad: string;
   fotoPrincipal: string;
@@ -73,6 +75,7 @@ export function mapConejoDBToConejo(conejoDB: ConejoDB): Conejo {
     sexo: conejoDB.sexo,
     precio: conejoDB.precio,
     tieneDescuento: conejoDB.tiene_descuento,
+    porcentajeDescuento: conejoDB.porcentaje_descuento ?? (conejoDB.tiene_descuento ? 30 : 0),
     fechaNacimiento: fechaDMY,
     disponibilidad: conejoDB.disponibilidad,
     fotoPrincipal: conejoDB.foto_principal,

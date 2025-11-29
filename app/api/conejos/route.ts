@@ -31,12 +31,16 @@ export async function POST(req: Request) {
 
     const fechaISO = toISODateFromDMY(body.fechaNacimiento);
 
+    const porcentajeDescuento = body.porcentaje_descuento ?? (body.tieneDescuento ? 30 : 0);
+    const tieneDescuento = porcentajeDescuento > 0;
+
     const payload = {
       id: body.id,
       raza: body.raza,
       sexo: body.sexo,
       precio: body.precio,
-      tiene_descuento: body.tieneDescuento,
+      tiene_descuento: tieneDescuento,
+      porcentaje_descuento: porcentajeDescuento,
       fecha_nacimiento: fechaISO,
       disponibilidad: body.disponibilidad,
       foto_principal: body.fotoPrincipal,

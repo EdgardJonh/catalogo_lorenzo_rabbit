@@ -152,7 +152,9 @@ export default function AdminConejoList({
                   <td className="py-4 text-green-400 font-semibold">
                     {formatoCLP(conejo.precio)}
                     {conejo.tieneDescuento && (
-                      <span className="ml-2 text-xs text-red-400">-30%</span>
+                      <span className="ml-2 text-xs text-red-400">
+                        -{((conejo as any).porcentajeDescuento ?? 30)}%
+                      </span>
                     )}
                   </td>
                   <td className="py-4 text-gray-300">
@@ -298,7 +300,9 @@ export default function AdminConejoList({
                   <span className="text-green-400 font-semibold ml-2">
                     {formatoCLP(conejo.precio)}
                     {conejo.tieneDescuento && (
-                      <span className="ml-1 text-xs text-red-400">-30%</span>
+                      <span className="ml-1 text-xs text-red-400">
+                        -{((conejo as any).porcentajeDescuento ?? 30)}%
+                      </span>
                     )}
                   </span>
                 </div>

@@ -81,8 +81,9 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
 
   const formatoCLP = (valor: number) =>
     new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(valor);
-  // Precio con decuento
-  const precioDes = 0.30 * conejo.precio;
+  // Precio con descuento
+  const porcentajeDescuento = (conejo as any).porcentajeDescuento ?? (conejo.tieneDescuento ? 30 : 0);
+  const precioDes = (porcentajeDescuento / 100) * conejo.precio;
   const precioConDescuento:number  = conejo.tieneDescuento ? (conejo.precio - precioDes): (conejo.precio);
 
   return (
@@ -111,7 +112,7 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
         </div>
         {conejo.tieneDescuento && (
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-xl text-xs">
-            -30%
+            -{porcentajeDescuento}%
           </div>
         )}
         <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold ${
@@ -153,7 +154,7 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
               <div className="flex items-center gap-2 mb-2">
                 <FaTag className="text-orange-500 text-sm" />
                 <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">
-                  -30%
+                  -{porcentajeDescuento}%
                 </span>
                 <span className="text-gray-400 line-through text-sm">
                   {formatoCLP(conejo.precio)}

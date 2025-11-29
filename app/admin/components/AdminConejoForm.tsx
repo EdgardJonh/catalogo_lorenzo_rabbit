@@ -21,6 +21,7 @@ export default function AdminConejoForm({
     sexo: "Macho",
     precio: "",
     tieneDescuento: false,
+    porcentajeDescuento: 0,
     fechaNacimiento: "",
     disponibilidad: "Disponible",
     fotoPrincipal: "",
@@ -51,6 +52,7 @@ export default function AdminConejoForm({
         sexo: conejo.sexo,
         precio: conejo.precio.toString(),
         tieneDescuento: conejo.tieneDescuento,
+        porcentajeDescuento: (conejo as any).porcentajeDescuento || (conejo.tieneDescuento ? 30 : 0),
         fechaNacimiento: conejo.fechaNacimiento,
         disponibilidad: conejo.disponibilidad,
         fotoPrincipal: conejo.fotoPrincipal,
@@ -73,6 +75,7 @@ export default function AdminConejoForm({
         sexo: "Macho",
         precio: "",
         tieneDescuento: false,
+        porcentajeDescuento: 0,
         fechaNacimiento: "",
         disponibilidad: "Disponible",
         fotoPrincipal: "",
@@ -202,12 +205,16 @@ export default function AdminConejoForm({
         throw new Error("Debes cargar una foto principal");
       }
 
+      const porcentajeDescuento = parseFloat(formData.porcentajeDescuento.toString()) || 0;
+      const tieneDescuento = porcentajeDescuento > 0;
+
       const conejoData = {
         id: formData.id,
         raza: formData.raza,
         sexo: formData.sexo,
         precio: parseFloat(formData.precio),
-        tiene_descuento: formData.tieneDescuento,
+        tiene_descuento: tieneDescuento,
+        porcentaje_descuento: porcentajeDescuento,
         // Enviamos en formato DMY; el endpoint convierte a ISO
         fechaNacimiento: formData.fechaNacimiento,
         disponibilidad: formData.disponibilidad,
@@ -420,19 +427,36 @@ export default function AdminConejoForm({
           </div>
         </div>
 
+        {/* Porcentaje de Descuento */}
+        <div>
+          <label className="block text-gray-300 mb-2 font-medium">
+            Porcentaje de Descuento (%)
+          </label>
+          <input
+            type="number"
+            name="porcentajeDescuento"
+            value={formData.porcentajeDescuento}
+            onChange={(e) => {
+              const value = parseFloat(e.target.value) || 0;
+              setFormData(prev => ({
+                ...prev,
+                porcentajeDescuento: value,
+                tieneDescuento: value > 0,
+              }));
+            }}
+            min="0"
+            max="100"
+            step="0.1"
+            className="w-full md:w-48 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="0"
+          />
+          <p className="text-gray-400 text-sm mt-1">
+            Ingresa el porcentaje de descuento (0-100). Si es mayor a 0, se aplicará automáticamente.
+          </p>
+        </div>
+
         {/* Checkboxes */}
         <div className="flex flex-wrap gap-6">
-          <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-            <input
-              type="checkbox"
-              name="tieneDescuento"
-              checked={formData.tieneDescuento}
-              onChange={handleChange}
-              className="w-5 h-5 rounded"
-            />
-            <span>Tiene Descuento (-30%)</span>
-          </label>
-
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <input
               type="checkbox"
