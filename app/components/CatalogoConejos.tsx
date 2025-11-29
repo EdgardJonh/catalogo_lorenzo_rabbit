@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ConejoCard from "./ConejoCard";
 import Image from "next/image";
 import { Luckiest_Guy, Roboto } from "next/font/google";
@@ -39,11 +39,74 @@ type SeccionCatalogo = "todos" | "reproductores" | "nueva-camada" | "otros";
 export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
   const [seccionActiva, setSeccionActiva] = useState<SeccionCatalogo>("todos");
 
-  // Separar conejitos: reproductores, nueva camada y resto
-  const reproductores = conejos.filter(conejo => conejo.reproductor === true);
-  const conejosVenta = conejos.filter(conejo => conejo.reproductor === false);
-  const nuevaCamada = conejosVenta.filter(conejo => conejo.fechaNacimiento === "14-06-2025");
-  const restoConejos = conejosVenta.filter(conejo => conejo.fechaNacimiento !== "14-06-2025");
+  // Función para parsear fecha DD-MM-YYYY a Date
+  const parseFechaNacimiento = (fechaStr: string): Date | null => {
+    try {
+      // Formato esperado: DD-MM-YYYY
+      const partes = fechaStr.split('-');
+      if (partes.length !== 3) return null;
+      
+      const dia = parseInt(partes[0], 10);
+      const mes = parseInt(partes[1], 10) - 1; // Los meses en JS son 0-indexed
+      const año = parseInt(partes[2], 10);
+      
+      if (isNaN(dia) || isNaN(mes) || isNaN(año)) return null;
+      
+      const fecha = new Date(año, mes, dia);
+      // Normalizar a medianoche para comparar solo fechas
+      fecha.setHours(0, 0, 0, 0);
+      // Validar que la fecha es válida
+      if (fecha.getDate() !== dia || fecha.getMonth() !== mes || fecha.getFullYear() !== año) {
+        return null;
+      }
+      
+      return fecha;
+    } catch {
+      return null;
+    }
+  };
+
+  // Calcular fecha de hace 3 meses (solo fecha, sin hora)
+  const fechaLimite = useMemo(() => {
+    const hoy = new Date();
+    const hace3Meses = new Date();
+    hace3Meses.setMonth(hoy.getMonth() - 3);
+    // Normalizar a medianoche para comparar solo fechas
+    hace3Meses.setHours(0, 0, 0, 0);
+    return hace3Meses;
+  }, []);
+
+  // Separar conejitos: reproductores, nueva camada (últimos 3 meses) y resto
+  const { reproductores, nuevaCamada, restoConejos } = useMemo(() => {
+    const reproductoresList = conejos.filter(conejo => conejo.reproductor === true);
+    const conejosVenta = conejos.filter(conejo => conejo.reproductor === false);
+    
+    const nuevaCamadaList: typeof conejos = [];
+    const restoConejosList: typeof conejos = [];
+    
+    conejosVenta.forEach(conejo => {
+      const fechaNac = parseFechaNacimiento(conejo.fechaNacimiento);
+      
+      if (fechaNac) {
+        // Si nació en los últimos 3 meses, va a nueva camada
+        if (fechaNac >= fechaLimite) {
+          nuevaCamadaList.push(conejo);
+        } else {
+          // Si tiene más de 3 meses, va a otros conejitos
+          restoConejosList.push(conejo);
+        }
+      } else {
+        // Si no se puede parsear la fecha, lo ponemos en otros conejitos por defecto
+        restoConejosList.push(conejo);
+      }
+    });
+    
+    return {
+      reproductores: reproductoresList,
+      nuevaCamada: nuevaCamadaList,
+      restoConejos: restoConejosList,
+    };
+  }, [conejos, fechaLimite]);
 
   // Contadores para el menú
   const contadores = {
