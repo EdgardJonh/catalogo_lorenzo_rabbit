@@ -24,23 +24,40 @@ interface Conejo {
 export default async function Home() {
   // Intentar obtener conejos desde Supabase, si falla usar JSON
   let conejos: Conejo[] = [];
+  let usandoSupabase = false;
   
   try {
     const conejosFromDB = await getConejos();
     
-    // Si hay datos en la DB y está configurada, usarlos
-    if (conejosFromDB.length > 0) {
+    // Verificar si Supabase está configurado
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    usandoSupabase = !!(supabaseUrl && supabaseAnonKey);
+    
+    if (usandoSupabase) {
+      // Si Supabase está configurado, usar los datos de la DB (puede estar vacío si todos están ocultos)
       conejos = conejosFromDB;
-      console.log('✅ Usando datos de Supabase');
+      console.log('✅ Usando datos de Supabase', conejos.length > 0 ? `(${conejos.length} conejos)` : '(todos ocultos)');
     } else {
-      // Fallback al JSON
+      // Si Supabase no está configurado, usar JSON como fallback
       conejos = conejosData as Conejo[];
-      console.log('📄 Usando datos del JSON (fallback)');
+      console.log('📄 Usando datos del JSON (Supabase no configurado)');
     }
   } catch (error) {
-    // En caso de error, usar JSON
-    console.log('⚠️ Error al obtener datos de Supabase, usando JSON:', error);
-    conejos = conejosData as Conejo[];
+    // En caso de error, verificar si Supabase está configurado
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    usandoSupabase = !!(supabaseUrl && supabaseAnonKey);
+    
+    if (usandoSupabase) {
+      // Si hay error pero Supabase está configurado, usar array vacío (mostrar mensaje)
+      conejos = [];
+      console.log('⚠️ Error al obtener datos de Supabase, mostrando mensaje de no disponibles');
+    } else {
+      // Si Supabase no está configurado, usar JSON
+      conejos = conejosData as Conejo[];
+      console.log('📄 Usando datos del JSON (fallback por error)');
+    }
   }
   
   return (
