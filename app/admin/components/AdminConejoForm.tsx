@@ -43,9 +43,26 @@ export default function AdminConejoForm({
   const [principalFile, setPrincipalFile] = useState<File | null>(null);
   const [adicionalesFiles, setAdicionalesFiles] = useState<File[]>([]);
 
+  // Función para convertir fecha DD-MM-YYYY a YYYY-MM-DD (formato para input date)
+  const convertDMYToYMD = (dmy: string): string => {
+    if (!dmy) return "";
+    // Si ya está en formato YYYY-MM-DD, retornar igual
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dmy)) return dmy;
+    // Convertir DD-MM-YYYY a YYYY-MM-DD
+    const partes = dmy.split("-");
+    if (partes.length === 3) {
+      const [dd, mm, yyyy] = partes;
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    return dmy;
+  };
+
   useEffect(() => {
     if (conejo) {
       // Modo edición
+      // Convertir fecha de DD-MM-YYYY a YYYY-MM-DD para el input date
+      const fechaParaInput = convertDMYToYMD(conejo.fechaNacimiento);
+      
       setFormData({
         id: conejo.id,
         raza: conejo.raza,
@@ -53,7 +70,7 @@ export default function AdminConejoForm({
         precio: conejo.precio.toString(),
         tieneDescuento: conejo.tieneDescuento,
         porcentajeDescuento: (conejo as any).porcentajeDescuento || (conejo.tieneDescuento ? 30 : 0),
-        fechaNacimiento: conejo.fechaNacimiento,
+        fechaNacimiento: fechaParaInput,
         disponibilidad: conejo.disponibilidad,
         fotoPrincipal: conejo.fotoPrincipal,
         fotosAdicionales: conejo.fotosAdicionales.join("\n"),
