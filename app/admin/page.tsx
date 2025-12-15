@@ -1,11 +1,24 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Conejo, Cruza, mapConejoDBToConejo, mapCruzaDBToCruza } from "../../lib/supabase";
+import {
+  Conejo,
+  Cruza,
+  Gestacion,
+  Parto,
+  mapConejoDBToConejo,
+  mapCruzaDBToCruza,
+  mapGestacionDBToGestacion,
+  mapPartoDBToParto,
+} from "../../lib/supabase";
 import { createSupabaseBrowserClient } from "../../lib/supabaseBrowser";
 import AdminConejoForm from "./components/AdminConejoForm";
 import AdminConejoList from "./components/AdminConejoList";
 import AdminCruzaForm from "./components/AdminCruzaForm";
 import AdminCruzaList from "./components/AdminCruzaList";
+import AdminGestacionForm from "./components/AdminGestacionForm";
+import AdminGestacionList from "./components/AdminGestacionList";
+import AdminPartoForm from "./components/AdminPartoForm";
+import AdminPartoList from "./components/AdminPartoList";
 import AdminAuth from "./components/AdminAuth";
 import { FaLock, FaUnlock } from "react-icons/fa";
 
@@ -17,13 +30,21 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [conejos, setConejos] = useState<Conejo[]>([]);
   const [cruzas, setCruzas] = useState<Cruza[]>([]);
+  const [gestaciones, setGestaciones] = useState<Gestacion[]>([]);
+  const [partos, setPartos] = useState<Parto[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingCruzas, setLoadingCruzas] = useState(true);
+  const [loadingGestaciones, setLoadingGestaciones] = useState(true);
+  const [loadingPartos, setLoadingPartos] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showCruzaForm, setShowCruzaForm] = useState(false);
+  const [showGestacionForm, setShowGestacionForm] = useState(false);
+  const [showPartoForm, setShowPartoForm] = useState(false);
   const [editingConejo, setEditingConejo] = useState<Conejo | null>(null);
   const [editingCruza, setEditingCruza] = useState<Cruza | null>(null);
-  const [activeTab, setActiveTab] = useState<"conejos" | "cruzas">("conejos");
+  const [editingGestacion, setEditingGestacion] = useState<Gestacion | null>(null);
+  const [editingParto, setEditingParto] = useState<Parto | null>(null);
+  const [activeTab, setActiveTab] = useState<"conejos" | "cruzas" | "gestaciones" | "partos">("conejos");
   const [initializing, setInitializing] = useState(true);
 
   // Crear cliente solo en el cliente (después del mount)
@@ -90,6 +111,56 @@ export default function AdminPage() {
     }
   };
 
+  const loadGestaciones = async () => {
+    if (!supabase) return;
+    setLoadingGestaciones(true);
+    try {
+      const { data, error } = await supabase
+        .from("gestaciones")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching gestaciones:", error);
+        setGestaciones([]);
+        return;
+      }
+
+      const mapped = (data || []).map(mapGestacionDBToGestacion);
+      setGestaciones(mapped);
+    } catch (error) {
+      console.error("Error loading gestaciones:", error);
+      setGestaciones([]);
+    } finally {
+      setLoadingGestaciones(false);
+    }
+  };
+
+  const loadPartos = async () => {
+    if (!supabase) return;
+    setLoadingPartos(true);
+    try {
+      const { data, error } = await supabase
+        .from("partos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching partos:", error);
+        setPartos([]);
+        return;
+      }
+
+      const mapped = (data || []).map(mapPartoDBToParto);
+      setPartos(mapped);
+    } catch (error) {
+      console.error("Error loading partos:", error);
+      setPartos([]);
+    } finally {
+      setLoadingPartos(false);
+    }
+  };
+
   // Verificar autenticación al cargar
   useEffect(() => {
     if (!supabase) return;
@@ -98,7 +169,7 @@ export default function AdminPage() {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         setIsAuthenticated(true);
-        await Promise.all([loadConejos(), loadCruzas()]);
+        await Promise.all([loadConejos(), loadCruzas(), loadGestaciones(), loadPartos()]);
       } else {
         setIsAuthenticated(false);
       }
@@ -113,10 +184,12 @@ export default function AdminPage() {
       const loggedIn = !!session;
       setIsAuthenticated(loggedIn);
       if (loggedIn) {
-        Promise.all([loadConejos(), loadCruzas()]);
+        Promise.all([loadConejos(), loadCruzas(), loadGestaciones(), loadPartos()]);
       } else {
         setConejos([]);
         setCruzas([]);
+        setGestaciones([]);
+        setPartos([]);
       }
     });
 
@@ -239,6 +312,84 @@ export default function AdminPage() {
     setEditingCruza(null);
   };
 
+  const handleCreateGestacion = () => {
+    setEditingGestacion(null);
+    setShowGestacionForm(true);
+  };
+
+  const handleEditGestacion = (gestacion: Gestacion) => {
+    setEditingGestacion(gestacion);
+    setShowGestacionForm(true);
+  };
+
+  const handleDeleteGestacion = async (id: string) => {
+    if (!confirm(`¿Estás seguro de eliminar la gestación ${id}?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/gestaciones?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || "Error al eliminar");
+      await loadGestaciones();
+      alert("Gestación eliminada exitosamente");
+    } catch (error: any) {
+      alert("Error: " + error.message);
+    }
+  };
+
+  const handleSaveGestacion = async () => {
+    await loadGestaciones();
+    setShowGestacionForm(false);
+    setEditingGestacion(null);
+  };
+
+  const handleCancelGestacion = () => {
+    setShowGestacionForm(false);
+    setEditingGestacion(null);
+  };
+
+  const handleCreateParto = () => {
+    setEditingParto(null);
+    setShowPartoForm(true);
+  };
+
+  const handleEditParto = (parto: Parto) => {
+    setEditingParto(parto);
+    setShowPartoForm(true);
+  };
+
+  const handleDeleteParto = async (id: string) => {
+    if (!confirm(`¿Estás seguro de eliminar el parto ${id}?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/partos?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || "Error al eliminar");
+      await loadPartos();
+      alert("Parto eliminado exitosamente");
+    } catch (error: any) {
+      alert("Error: " + error.message);
+    }
+  };
+
+  const handleSaveParto = async () => {
+    await loadPartos();
+    setShowPartoForm(false);
+    setEditingParto(null);
+  };
+
+  const handleCancelParto = () => {
+    setShowPartoForm(false);
+    setEditingParto(null);
+  };
+
   if (initializing && supabase) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 flex items-center justify-center">
@@ -294,11 +445,11 @@ export default function AdminPage() {
                 🐰 Panel de Administración
               </h1>
               <p className="text-gray-300">
-                Gestiona tu catálogo de conejitos y cruzas
+                Gestiona tu catálogo de conejitos, cruzas, gestaciones y partos
               </p>
             </div>
             <div className="flex gap-3">
-              {!showForm && !showCruzaForm && (
+              {!showForm && !showCruzaForm && !showGestacionForm && !showPartoForm && (
                 <>
                   {activeTab === "conejos" && (
                     <button
@@ -316,6 +467,22 @@ export default function AdminPage() {
                       + Nueva Cruza
                     </button>
                   )}
+                  {activeTab === "gestaciones" && (
+                    <button
+                      onClick={handleCreateGestacion}
+                      className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      + Nueva Gestación
+                    </button>
+                  )}
+                  {activeTab === "partos" && (
+                    <button
+                      onClick={handleCreateParto}
+                      className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      + Nuevo Parto
+                    </button>
+                  )}
                 </>
               )}
               <button
@@ -329,8 +496,8 @@ export default function AdminPage() {
         </div>
 
         {/* Tabs */}
-        {!showForm && !showCruzaForm && (
-          <div className="flex gap-2 mb-6">
+        {!showForm && !showCruzaForm && !showGestacionForm && !showPartoForm && (
+          <div className="flex flex-wrap gap-2 mb-6">
             <button
               onClick={() => setActiveTab("conejos")}
               className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
@@ -351,6 +518,26 @@ export default function AdminPage() {
             >
               Cruzas
             </button>
+            <button
+              onClick={() => setActiveTab("gestaciones")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                activeTab === "gestaciones"
+                  ? "bg-purple-600 text-white"
+                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+              }`}
+            >
+              Gestaciones
+            </button>
+            <button
+              onClick={() => setActiveTab("partos")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                activeTab === "partos"
+                  ? "bg-purple-600 text-white"
+                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+              }`}
+            >
+              Partos
+            </button>
           </div>
         )}
 
@@ -368,6 +555,20 @@ export default function AdminPage() {
             onSave={handleSaveCruza}
             onCancel={handleCancelCruza}
           />
+        ) : showGestacionForm ? (
+          <AdminGestacionForm
+            gestacion={editingGestacion}
+            cruzas={cruzas}
+            onSave={handleSaveGestacion}
+            onCancel={handleCancelGestacion}
+          />
+        ) : showPartoForm ? (
+          <AdminPartoForm
+            parto={editingParto}
+            cruzas={cruzas}
+            onSave={handleSaveParto}
+            onCancel={handleCancelParto}
+          />
         ) : activeTab === "conejos" ? (
           <AdminConejoList
             conejos={conejos}
@@ -377,7 +578,7 @@ export default function AdminPage() {
             onRefresh={loadConejos}
             onToggleVisible={handleToggleVisible}
           />
-        ) : (
+        ) : activeTab === "cruzas" ? (
           <AdminCruzaList
             cruzas={cruzas}
             conejos={conejos}
@@ -385,6 +586,24 @@ export default function AdminPage() {
             onEdit={handleEditCruza}
             onDelete={handleDeleteCruza}
             onRefresh={loadCruzas}
+          />
+        ) : activeTab === "gestaciones" ? (
+          <AdminGestacionList
+            gestaciones={gestaciones}
+            cruzas={cruzas}
+            loading={loadingGestaciones}
+            onEdit={handleEditGestacion}
+            onDelete={handleDeleteGestacion}
+            onRefresh={loadGestaciones}
+          />
+        ) : (
+          <AdminPartoList
+            partos={partos}
+            cruzas={cruzas}
+            loading={loadingPartos}
+            onEdit={handleEditParto}
+            onDelete={handleDeleteParto}
+            onRefresh={loadPartos}
           />
         )}
       </div>

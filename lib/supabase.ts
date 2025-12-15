@@ -68,6 +68,44 @@ export interface Cruza {
   madre?: Conejo;
 }
 
+// Tipos para gestaciones
+export interface GestacionDB {
+  id: string;
+  id_cruza: string;
+  fecha_colocar_nidal?: string;
+  fecha_estimada_parto?: string;
+  observaciones?: string;
+  created_at?: string;
+}
+
+export interface Gestacion {
+  id: string;
+  idCruza: string;
+  fechaColocarNidal?: string;
+  fechaEstimadaParto?: string;
+  observaciones?: string;
+}
+
+// Tipos para partos
+export interface PartoDB {
+  id: string;
+  id_cruza: string;
+  fecha_parto: string;
+  gazapos_totales?: number;
+  gazapos_vivos?: number;
+  observaciones?: string;
+  created_at?: string;
+}
+
+export interface Parto {
+  id: string;
+  idCruza: string;
+  fechaParto: string;
+  gazaposTotales?: number;
+  gazaposVivos?: number;
+  observaciones?: string;
+}
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
@@ -141,6 +179,47 @@ export function mapCruzaDBToCruza(cruzaDB: CruzaDB): Cruza {
     fechaPartoReal: formatDate(cruzaDB.fecha_parto_real),
     estado: cruzaDB.estado,
     notas: cruzaDB.notas,
+  };
+}
+
+// Función para mapear datos de DB a formato de la app (gestaciones)
+export function mapGestacionDBToGestacion(gestacionDB: GestacionDB): Gestacion {
+  const formatDate = (iso?: string): string | undefined => {
+    if (!iso) return undefined;
+    if (/\d{4}-\d{2}-\d{2}/.test(iso)) {
+      const [y, m, d] = iso.split('-');
+      return `${d}-${m}-${y}`;
+    }
+    return iso;
+  };
+
+  return {
+    id: gestacionDB.id,
+    idCruza: gestacionDB.id_cruza,
+    fechaColocarNidal: formatDate(gestacionDB.fecha_colocar_nidal),
+    fechaEstimadaParto: formatDate(gestacionDB.fecha_estimada_parto),
+    observaciones: gestacionDB.observaciones || undefined,
+  };
+}
+
+// Función para mapear datos de DB a formato de la app (partos)
+export function mapPartoDBToParto(partoDB: PartoDB): Parto {
+  const formatDate = (iso?: string): string => {
+    if (!iso) return '';
+    if (/\d{4}-\d{2}-\d{2}/.test(iso)) {
+      const [y, m, d] = iso.split('-');
+      return `${d}-${m}-${y}`;
+    }
+    return iso;
+  };
+
+  return {
+    id: partoDB.id,
+    idCruza: partoDB.id_cruza,
+    fechaParto: formatDate(partoDB.fecha_parto),
+    gazaposTotales: partoDB.gazapos_totales,
+    gazaposVivos: partoDB.gazapos_vivos,
+    observaciones: partoDB.observaciones || undefined,
   };
 }
 

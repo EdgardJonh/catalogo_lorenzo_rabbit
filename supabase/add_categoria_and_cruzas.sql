@@ -66,3 +66,73 @@ USING (true);
 -- ON cruzas FOR ALL
 -- USING (auth.role() = 'authenticated');
 
+-- 3. Crear tabla gestaciones
+CREATE TABLE IF NOT EXISTS gestaciones (
+  id TEXT PRIMARY KEY,
+  id_cruza TEXT NOT NULL REFERENCES cruzas(id) ON DELETE CASCADE,
+  fecha_colocar_nidal DATE,
+  fecha_estimada_parto DATE,
+  observaciones TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Índice para búsquedas rápidas por cruza
+CREATE INDEX IF NOT EXISTS idx_gestaciones_cruza ON gestaciones(id_cruza);
+
+-- 4. Crear tabla partos
+CREATE TABLE IF NOT EXISTS partos (
+  id TEXT PRIMARY KEY,
+  id_cruza TEXT NOT NULL REFERENCES cruzas(id) ON DELETE CASCADE,
+  fecha_parto DATE NOT NULL,
+  gazapos_totales INT,
+  gazapos_vivos INT,
+  observaciones TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Índice para búsquedas rápidas por cruza
+CREATE INDEX IF NOT EXISTS idx_partos_cruza ON partos(id_cruza);
+
+-- 5. Triggers OPCIONALES para calcular fechas en gestaciones
+-- Estos triggers rellenan automáticamente:
+--   - fecha_estimada_parto = fecha_cruza + 30 días
+--   - fecha_colocar_nidal  = fecha_cruza + 26 días
+-- si esos campos vienen NULL al insertar/actualizar una gestación.
+
+-- Función para calcular fechas de gestación basadas en la cruza
+CREATE OR REPLACE FUNCTION calcular_fechas_gestacion()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_fecha_cruza DATE;
+BEGIN
+  -- Obtener fecha_cruza de la tabla cruzas
+  SELECT fecha_cruza INTO v_fecha_cruza
+  FROM cruzas
+  WHERE id = NEW.id_cruza;
+
+  -- Si no se encuentra la cruza, no modificar
+  IF v_fecha_cruza IS NULL THEN
+    RETURN NEW;
+  END IF;
+
+  -- Calcular fechas solo si vienen nulas
+  IF NEW.fecha_estimada_parto IS NULL THEN
+    NEW.fecha_estimada_parto = v_fecha_cruza + INTERVAL '30 days';
+  END IF;
+
+  IF NEW.fecha_colocar_nidal IS NULL THEN
+    NEW.fecha_colocar_nidal = v_fecha_cruza + INTERVAL '26 days';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger OPCIONAL: descomenta estas líneas si quieres que se apliquen automáticamente
+-- DROP TRIGGER IF EXISTS trg_calcular_fechas_gestacion ON gestaciones;
+-- CREATE TRIGGER trg_calcular_fechas_gestacion
+--   BEFORE INSERT OR UPDATE ON gestaciones
+--   FOR EACH ROW
+--   EXECUTE FUNCTION calcular_fechas_gestacion();
+
+
