@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Conejo, mapConejoDBToConejo } from "../../lib/supabase";
+import { Conejo, Cruza, mapConejoDBToConejo, mapCruzaDBToCruza } from "../../lib/supabase";
 import { createSupabaseBrowserClient } from "../../lib/supabaseBrowser";
 import AdminConejoForm from "./components/AdminConejoForm";
 import AdminConejoList from "./components/AdminConejoList";
+import AdminCruzaForm from "./components/AdminCruzaForm";
+import AdminCruzaList from "./components/AdminCruzaList";
 import AdminAuth from "./components/AdminAuth";
 import { FaLock, FaUnlock } from "react-icons/fa";
 
@@ -14,9 +16,14 @@ export default function AdminPage() {
   const [supabase, setSupabase] = useState<ReturnType<typeof createSupabaseBrowserClient> | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [conejos, setConejos] = useState<Conejo[]>([]);
+  const [cruzas, setCruzas] = useState<Cruza[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingCruzas, setLoadingCruzas] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showCruzaForm, setShowCruzaForm] = useState(false);
   const [editingConejo, setEditingConejo] = useState<Conejo | null>(null);
+  const [editingCruza, setEditingCruza] = useState<Cruza | null>(null);
+  const [activeTab, setActiveTab] = useState<"conejos" | "cruzas">("conejos");
   const [initializing, setInitializing] = useState(true);
 
   // Crear cliente solo en el cliente (después del mount)
@@ -57,6 +64,32 @@ export default function AdminPage() {
     }
   };
 
+  // Cargar cruzas
+  const loadCruzas = async () => {
+    if (!supabase) return;
+    setLoadingCruzas(true);
+    try {
+      const { data, error } = await supabase
+        .from('cruzas')
+        .select('*')
+        .order('fecha_cruza', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching cruzas:', error);
+        setCruzas([]);
+        return;
+      }
+
+      const mappedCruzas = (data || []).map(mapCruzaDBToCruza);
+      setCruzas(mappedCruzas);
+    } catch (error) {
+      console.error("Error loading cruzas:", error);
+      setCruzas([]);
+    } finally {
+      setLoadingCruzas(false);
+    }
+  };
+
   // Verificar autenticación al cargar
   useEffect(() => {
     if (!supabase) return;
@@ -65,7 +98,7 @@ export default function AdminPage() {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         setIsAuthenticated(true);
-        await loadConejos();
+        await Promise.all([loadConejos(), loadCruzas()]);
       } else {
         setIsAuthenticated(false);
       }
@@ -80,9 +113,10 @@ export default function AdminPage() {
       const loggedIn = !!session;
       setIsAuthenticated(loggedIn);
       if (loggedIn) {
-        loadConejos();
+        Promise.all([loadConejos(), loadCruzas()]);
       } else {
         setConejos([]);
+        setCruzas([]);
       }
     });
 
@@ -167,6 +201,44 @@ export default function AdminPage() {
     setEditingConejo(null);
   };
 
+  // CRUD Operations para Cruzas
+  const handleCreateCruza = () => {
+    setEditingCruza(null);
+    setShowCruzaForm(true);
+  };
+
+  const handleEditCruza = (cruza: Cruza) => {
+    setEditingCruza(cruza);
+    setShowCruzaForm(true);
+  };
+
+  const handleDeleteCruza = async (id: string) => {
+    if (!confirm(`¿Estás seguro de eliminar la cruza ${id}?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/cruzas?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || 'Error al eliminar');
+      await loadCruzas();
+      alert("Cruza eliminada exitosamente");
+    } catch (error: any) {
+      alert("Error: " + error.message);
+    }
+  };
+
+  const handleSaveCruza = async () => {
+    await loadCruzas();
+    setShowCruzaForm(false);
+    setEditingCruza(null);
+  };
+
+  const handleCancelCruza = () => {
+    setShowCruzaForm(false);
+    setEditingCruza(null);
+  };
+
   if (initializing && supabase) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 flex items-center justify-center">
@@ -222,17 +294,29 @@ export default function AdminPage() {
                 🐰 Panel de Administración
               </h1>
               <p className="text-gray-300">
-                Gestiona tu catálogo de conejitos
+                Gestiona tu catálogo de conejitos y cruzas
               </p>
             </div>
             <div className="flex gap-3">
-              {!showForm && (
-                <button
-                  onClick={handleCreate}
-                  className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors"
-                >
-                  + Nuevo Conejito
-                </button>
+              {!showForm && !showCruzaForm && (
+                <>
+                  {activeTab === "conejos" && (
+                    <button
+                      onClick={handleCreate}
+                      className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      + Nuevo Conejito
+                    </button>
+                  )}
+                  {activeTab === "cruzas" && (
+                    <button
+                      onClick={handleCreateCruza}
+                      className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      + Nueva Cruza
+                    </button>
+                  )}
+                </>
               )}
               <button
                 onClick={handleLogout}
@@ -244,14 +328,47 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Formulario o Lista */}
+        {/* Tabs */}
+        {!showForm && !showCruzaForm && (
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setActiveTab("conejos")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                activeTab === "conejos"
+                  ? "bg-purple-600 text-white"
+                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+              }`}
+            >
+              Conejos
+            </button>
+            <button
+              onClick={() => setActiveTab("cruzas")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                activeTab === "cruzas"
+                  ? "bg-purple-600 text-white"
+                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+              }`}
+            >
+              Cruzas
+            </button>
+          </div>
+        )}
+
+        {/* Contenido según tab activo */}
         {showForm ? (
           <AdminConejoForm
             conejo={editingConejo}
             onSave={handleSave}
             onCancel={handleCancel}
           />
-        ) : (
+        ) : showCruzaForm ? (
+          <AdminCruzaForm
+            cruza={editingCruza}
+            conejos={conejos}
+            onSave={handleSaveCruza}
+            onCancel={handleCancelCruza}
+          />
+        ) : activeTab === "conejos" ? (
           <AdminConejoList
             conejos={conejos}
             loading={loading}
@@ -259,6 +376,15 @@ export default function AdminPage() {
             onDelete={handleDelete}
             onRefresh={loadConejos}
             onToggleVisible={handleToggleVisible}
+          />
+        ) : (
+          <AdminCruzaList
+            cruzas={cruzas}
+            conejos={conejos}
+            loading={loadingCruzas}
+            onEdit={handleEditCruza}
+            onDelete={handleDeleteCruza}
+            onRefresh={loadCruzas}
           />
         )}
       </div>

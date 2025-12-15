@@ -46,6 +46,7 @@ export async function POST(req: Request) {
       foto_principal: body.fotoPrincipal,
       fotos_adicionales: body.fotosAdicionales || [],
       reproductor: body.reproductor,
+      categoria: body.categoria || 'ventas',
       visible: body.visible !== undefined ? body.visible : true, // Default true
     };
 

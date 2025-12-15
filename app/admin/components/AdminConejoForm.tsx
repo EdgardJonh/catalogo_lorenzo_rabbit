@@ -27,6 +27,7 @@ export default function AdminConejoForm({
     fotoPrincipal: "",
     fotosAdicionales: "",
     reproductor: false,
+    categoria: "ventas" as "reproductor" | "ventas" | "padre" | "madre",
     visible: true,
   });
 
@@ -75,6 +76,7 @@ export default function AdminConejoForm({
         fotoPrincipal: conejo.fotoPrincipal,
         fotosAdicionales: conejo.fotosAdicionales.join("\n"),
         reproductor: conejo.reproductor,
+        categoria: conejo.categoria || (conejo.reproductor ? "reproductor" : "ventas"),
         visible: conejo.visible ?? true,
       });
       // Cargar previews de imágenes existentes
@@ -98,6 +100,7 @@ export default function AdminConejoForm({
         fotoPrincipal: "",
         fotosAdicionales: "",
         reproductor: false,
+        categoria: "ventas",
         visible: true,
       });
       setPreviewPrincipal(null);
@@ -238,6 +241,7 @@ export default function AdminConejoForm({
         fotoPrincipal: finalFotoPrincipal,
         fotosAdicionales: finalFotosAdicionales,
         reproductor: formData.reproductor,
+        categoria: formData.categoria,
         visible: formData.visible,
       };
 
@@ -472,6 +476,27 @@ export default function AdminConejoForm({
           </p>
         </div>
 
+        {/* Categoría */}
+        <div>
+          <label className="block text-gray-300 mb-2 font-medium">
+            Categoría
+          </label>
+          <select
+            name="categoria"
+            value={formData.categoria}
+            onChange={handleChange}
+            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="ventas">Ventas</option>
+            <option value="reproductor">Reproductor</option>
+            <option value="padre">Padre</option>
+            <option value="madre">Madre</option>
+          </select>
+          <p className="text-gray-400 text-sm mt-1">
+            Selecciona la categoría del conejo. Los reproductores, padres y madres pueden usarse en cruzas.
+          </p>
+        </div>
+
         {/* Checkboxes */}
         <div className="flex flex-wrap gap-6">
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
@@ -482,7 +507,7 @@ export default function AdminConejoForm({
               onChange={handleChange}
               className="w-5 h-5 rounded"
             />
-            <span>Es Reproductor</span>
+            <span>Es Reproductor (legacy)</span>
           </label>
 
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
