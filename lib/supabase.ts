@@ -109,12 +109,16 @@ export interface Parto {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Función para obtener el cliente de Supabase (lazy initialization)
+// Función para obtener el cliente de Supabase (solo en servidor / RSC).
+// En el navegador no se crea aquí: evita un segundo GoTrueClient junto a createSupabaseBrowserClient() del admin.
 function getSupabaseClient() {
+  if (typeof window !== 'undefined') {
+    return null;
+  }
   if (!supabaseUrl || !supabaseAnonKey) {
     return null;
   }
-  
+
   try {
     return createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
