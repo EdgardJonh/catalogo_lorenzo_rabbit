@@ -390,15 +390,19 @@ export default function AdminPage() {
     setEditingParto(null);
   };
 
-  if (initializing && supabase) {
-    return (
-      <div className="min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Inicializando...</p>
-        </div>
+  const pantallaInicializando = (
+    <div className="min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+        <p className="text-white text-lg">Inicializando...</p>
       </div>
-    );
+    </div>
+  );
+
+  // Primer paint: supabase aún no existe (useEffect no corrió). Sin esta condición se mostraba
+  // un destello de "Error de Configuración" antes de crear el cliente.
+  if (!supabase && initializing) {
+    return pantallaInicializando;
   }
 
   if (!supabase) {
@@ -428,6 +432,10 @@ export default function AdminPage() {
         </div>
       </div>
     );
+  }
+
+  if (initializing) {
+    return pantallaInicializando;
   }
 
   if (!isAuthenticated) {
