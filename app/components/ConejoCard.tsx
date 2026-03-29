@@ -1,6 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
-import { FaCamera, FaTag, FaVenusMars, FaCalendarAlt, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa";
+import {
+  FaCamera,
+  FaTag,
+  FaPaw,
+  FaVenusMars,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaWhatsapp,
+  FaBirthdayCake,
+} from "react-icons/fa";
 import Image from "next/image";
 import ConejoModal from "./ConejoModal";
 
@@ -15,6 +24,44 @@ interface Conejo {
   fotoPrincipal: string;
   fotosAdicionales: string[];
   reproductor: boolean;
+}
+
+/** Formato esperado: DD-MM-YYYY (mismo que en el catálogo). */
+function parseFechaNacimiento(fechaStr: string): Date | null {
+  try {
+    const partes = fechaStr.split("-");
+    if (partes.length !== 3) return null;
+    const dia = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1;
+    const año = parseInt(partes[2], 10);
+    if (isNaN(dia) || isNaN(mes) || isNaN(año)) return null;
+    const fecha = new Date(año, mes, dia);
+    fecha.setHours(0, 0, 0, 0);
+    if (fecha.getDate() !== dia || fecha.getMonth() !== mes || fecha.getFullYear() !== año) {
+      return null;
+    }
+    return fecha;
+  } catch {
+    return null;
+  }
+}
+
+function edadEnMesesDesde(fechaNac: Date): number | null {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const nac = new Date(fechaNac);
+  nac.setHours(0, 0, 0, 0);
+  if (nac > hoy) return null;
+  let meses =
+    (hoy.getFullYear() - nac.getFullYear()) * 12 + (hoy.getMonth() - nac.getMonth());
+  if (hoy.getDate() < nac.getDate()) meses--;
+  return Math.max(0, meses);
+}
+
+function textoEdadMeses(meses: number): string {
+  if (meses < 1) return "Menos de 1 mes";
+  if (meses === 1) return "1 mes";
+  return `${meses} meses`;
 }
 
 export default function ConejoCard({ conejo }: { conejo: Conejo }) {
@@ -86,6 +133,10 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
   const precioDes = (porcentajeDescuento / 100) * conejo.precio;
   const precioConDescuento:number  = conejo.tieneDescuento ? (conejo.precio - precioDes): (conejo.precio);
 
+  const fechaNacParsed = parseFechaNacimiento(conejo.fechaNacimiento);
+  const mesesEdad =
+    fechaNacParsed !== null ? edadEnMesesDesde(fechaNacParsed) : null;
+
   return (
     <div className={`bg-white rounded-xl shadow-md flex flex-col items-center hover:shadow-lg transition-shadow ${
       !isDisponible ? 'opacity-60' : ''
@@ -133,7 +184,7 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
         
         <div className="space-y-3 mb-4">
           <div className="flex items-center justify-center space-x-2">
-            <FaMapMarkerAlt className="text-blue-500 text-sm" />
+            <FaPaw className="text-blue-500 text-sm" />
             <p className="text-gray-700 font-medium">Raza: <span className="font-semibold text-gray-900">{conejo.raza}</span></p>
           </div>
           
@@ -142,9 +193,23 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
             <p className="text-gray-700 font-medium">Sexo: <span className="font-semibold text-gray-900">{conejo.sexo}</span></p>
           </div>
           
-          <div className="flex items-center justify-center space-x-2">
-            <FaCalendarAlt className="text-green-500 text-sm" />
-            <p className="text-gray-700 font-medium">Nacimiento: <span className="font-semibold text-gray-900">{conejo.fechaNacimiento}</span></p>
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center justify-center space-x-2">
+              <FaCalendarAlt className="text-green-500 text-sm shrink-0" />
+              <p className="text-gray-700 font-medium">
+                Nacimiento:{" "}
+                <span className="font-semibold text-gray-900">{conejo.fechaNacimiento}</span>
+              </p>
+            </div>
+            {mesesEdad !== null && (
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                <FaBirthdayCake className="text-amber-500 text-sm shrink-0" aria-hidden />
+                <p>
+                  <span className="font-medium text-gray-700">Edad:</span>{" "}
+                  <span className="text-gray-900 font-semibold">{textoEdadMeses(mesesEdad)}</span>
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
