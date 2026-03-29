@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ConejoCard from "./ConejoCard";
 import Image from "next/image";
 import { Luckiest_Guy, Roboto } from "next/font/google";
@@ -48,6 +48,20 @@ function ordenarDisponiblesPrimero(lista: Conejo[]): Conejo[] {
 
 export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
   const [seccionActiva, setSeccionActiva] = useState<SeccionCatalogo>("todos");
+  const [enLinea, setEnLinea] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    const sync = () => setEnLinea(navigator.onLine);
+    sync();
+    window.addEventListener("online", sync);
+    window.addEventListener("offline", sync);
+    return () => {
+      window.removeEventListener("online", sync);
+      window.removeEventListener("offline", sync);
+    };
+  }, []);
+
+  const sinConexion = enLinea === false;
 
   // Función para parsear fecha DD-MM-YYYY a Date
   const parseFechaNacimiento = (fechaStr: string): Date | null => {
@@ -174,76 +188,97 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
          
          </div>
 
-      {/* Menú de Navegación */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <CatalogoMenu
-          seccionActiva={seccionActiva}
-          onSeccionChange={setSeccionActiva}
-          contadores={contadores}
-        />
-      </div>
+      {/* Menú y listas: solo con conexión (el catálogo en vivo no debe mostrarse offline ni datos en caché obsoletos) */}
+      {!sinConexion && (
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+          <CatalogoMenu
+            seccionActiva={seccionActiva}
+            onSeccionChange={setSeccionActiva}
+            contadores={contadores}
+          />
+        </div>
+      )}
 
-      {/* Mensaje cuando no hay conejos disponibles */}
-      {conejos.length === 0 && (
+      {sinConexion ? (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-          <div className="bg-gradient-to-r from-purple-900/30 to-indigo-800/30 rounded-xl p-12 border border-purple-500/40 text-center">
-            <div className="text-6xl mb-6">🐰</div>
-            <h3 className={`${luckiestGuy.className} text-3xl md:text-4xl font-bold text-purple-400 mb-4`}>
-              ¡Hola!
+          <div className="bg-gradient-to-r from-amber-900/30 to-orange-900/30 rounded-xl p-12 border border-amber-500/40 text-center">
+            <div className="text-6xl mb-6">📶</div>
+            <h3 className={`${luckiestGuy.className} text-3xl md:text-4xl font-bold text-amber-300 mb-4`}>
+              Sin conexión a internet
             </h3>
-            <p className="text-xl md:text-2xl text-gray-300 mb-2">
-              Gracias por estar aquí
+            <p className="text-lg md:text-xl text-gray-300 mb-2">
+              No podemos mostrar el catálogo de conejitos sin una conexión activa.
             </p>
-            <p className="text-lg md:text-xl text-gray-400">
-              Por el momento no tenemos conejitos disponibles, ¡regresa pronto!
+            <p className="text-base md:text-lg text-gray-400">
+              Comprueba tu red y vuelve a intentarlo.
             </p>
           </div>
         </div>
-      )}
-     
-      {/* Conejitos Reproductores */}
-      {mostrarReproductores && reproductores.length > 0 && (
-        <div className="mb-12 bg-gradient-to-r from-purple-900/20 to-indigo-800/20 rounded-xl p-8 border border-purple-500/40">
-          <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-purple-400 mb-6 text-center`}>
-            🐇 Conejitos Reproductores 🐇
-          </h3>
-          <p className="text-center text-gray-300 mb-6 text-sm md:text-base">
-            Nuestros reproductores de excelente calidad genética
-          </p>
-          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {reproductores.map((conejo) => (
-              <ConejoCard key={conejo.id} conejo={conejo} />
-            ))}
-          </div>
-        </div>
-      )}
+      ) : (
+        <>
+          {/* Mensaje cuando no hay conejos disponibles */}
+          {conejos.length === 0 && (
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+              <div className="bg-gradient-to-r from-purple-900/30 to-indigo-800/30 rounded-xl p-12 border border-purple-500/40 text-center">
+                <div className="text-6xl mb-6">🐰</div>
+                <h3 className={`${luckiestGuy.className} text-3xl md:text-4xl font-bold text-purple-400 mb-4`}>
+                  ¡Hola!
+                </h3>
+                <p className="text-xl md:text-2xl text-gray-300 mb-2">
+                  Gracias por estar aquí
+                </p>
+                <p className="text-lg md:text-xl text-gray-400">
+                  Por el momento no tenemos conejitos disponibles, ¡regresa pronto!
+                </p>
+              </div>
+            </div>
+          )}
 
-      {/* Nueva Camada Disponible */}
-      {mostrarNuevaCamada && nuevaCamada.length > 0 && (
-        <div className="mb-12 bg-gradient-to-r from-green-900/20 to-emerald-800/20 rounded-xl p-8 border border-green-500/40">
-          <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-green-400 mb-6 text-center`}>
-            🐰 Nueva Camada Disponible 🐰
-          </h3>
-          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {nuevaCamada.map((conejo) => (
-              <ConejoCard key={conejo.id} conejo={conejo} />
-            ))}
-          </div>
-        </div>
-      )}
+          {/* Conejitos Reproductores */}
+          {mostrarReproductores && reproductores.length > 0 && (
+            <div className="mb-12 bg-gradient-to-r from-purple-900/20 to-indigo-800/20 rounded-xl p-8 border border-purple-500/40">
+              <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-purple-400 mb-6 text-center`}>
+                🐇 Conejitos Reproductores 🐇
+              </h3>
+              <p className="text-center text-gray-300 mb-6 text-sm md:text-base">
+                Nuestros reproductores de excelente calidad genética
+              </p>
+              <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {reproductores.map((conejo) => (
+                  <ConejoCard key={conejo.id} conejo={conejo} />
+                ))}
+              </div>
+            </div>
+          )}
 
-      {/* Resto de Conejos */}
-      {mostrarOtros && restoConejos.length > 0 && (
-        <div>
-          <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-gray-50 mb-6 text-center`}>
-            Otros Conejitos Disponibles
-          </h3>
-          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {restoConejos.map((conejo) => (
-              <ConejoCard key={conejo.id} conejo={conejo} />
-            ))}
-          </div>
-        </div>
+          {/* Nueva Camada Disponible */}
+          {mostrarNuevaCamada && nuevaCamada.length > 0 && (
+            <div className="mb-12 bg-gradient-to-r from-green-900/20 to-emerald-800/20 rounded-xl p-8 border border-green-500/40">
+              <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-green-400 mb-6 text-center`}>
+                🐰 Nueva Camada Disponible 🐰
+              </h3>
+              <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {nuevaCamada.map((conejo) => (
+                  <ConejoCard key={conejo.id} conejo={conejo} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Resto de Conejos */}
+          {mostrarOtros && restoConejos.length > 0 && (
+            <div>
+              <h3 className={`${luckiestGuy.className} text-2xl md:text-3xl font-bold text-gray-50 mb-6 text-center`}>
+                Otros Conejitos Disponibles
+              </h3>
+              <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {restoConejos.map((conejo) => (
+                  <ConejoCard key={conejo.id} conejo={conejo} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
       
       <div className="text-center mt-12">

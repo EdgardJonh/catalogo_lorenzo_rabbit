@@ -22,20 +22,19 @@ interface Conejo {
 }
 
 export default async function Home() {
-  // Intentar obtener conejos desde Supabase, si falla usar JSON
+  // Supabase configurado: solo datos de la API (sin red / error → lista vacía, nunca JSON embebido).
+  // Sin Supabase (p. ej. desarrollo local): fallback a public/data/conejos.json.
   let conejos: Conejo[] = [];
   let usandoSupabase = false;
-  
+
   try {
     const conejosFromDB = await getConejos();
-    
-    // Verificar si Supabase está configurado
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
     usandoSupabase = !!(supabaseUrl && supabaseAnonKey);
-    
+
     if (usandoSupabase) {
-      // Si Supabase está configurado, usar los datos de la DB (puede estar vacío si todos están ocultos)
       conejos = conejosFromDB;
       console.log('✅ Usando datos de Supabase', conejos.length > 0 ? `(${conejos.length} conejos)` : '(todos ocultos)');
     } else {
