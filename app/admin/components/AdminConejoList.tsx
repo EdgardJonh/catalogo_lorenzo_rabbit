@@ -1,6 +1,17 @@
 "use client";
 import { Conejo } from "../../../lib/supabase";
-import { FaEdit, FaTrash, FaSyncAlt, FaSearch, FaEye, FaEyeSlash, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrash,
+  FaSyncAlt,
+  FaSearch,
+  FaEye,
+  FaEyeSlash,
+  FaChevronLeft,
+  FaChevronRight,
+  FaCheck,
+  FaBan,
+} from "react-icons/fa";
 import { useState, useMemo, useEffect } from "react";
 
 interface AdminConejoListProps {
@@ -10,6 +21,7 @@ interface AdminConejoListProps {
   onDelete: (id: string) => void;
   onRefresh: () => void;
   onToggleVisible: (id: string, visible: boolean) => void;
+  onToggleDisponibilidad: (id: string, disponibilidad: string) => Promise<void>;
 }
 
 export default function AdminConejoList({
@@ -19,9 +31,11 @@ export default function AdminConejoList({
   onDelete,
   onRefresh,
   onToggleVisible,
+  onToggleDisponibilidad,
 }: AdminConejoListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [updatingVisible, setUpdatingVisible] = useState<string | null>(null);
+  const [updatingDisponibilidad, setUpdatingDisponibilidad] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -66,6 +80,17 @@ export default function AdminConejoList({
       await onToggleVisible(conejo.id, newVisible);
     } finally {
       setUpdatingVisible(null);
+    }
+  };
+
+  const handleToggleDisponibilidad = async (conejo: Conejo) => {
+    const nueva =
+      conejo.disponibilidad === "Disponible" ? "no Disponible" : "Disponible";
+    setUpdatingDisponibilidad(conejo.id);
+    try {
+      await onToggleDisponibilidad(conejo.id, nueva);
+    } finally {
+      setUpdatingDisponibilidad(null);
     }
   };
 
@@ -192,7 +217,29 @@ export default function AdminConejoList({
                     </span>
                   </td>
                   <td className="py-4">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-2 flex-wrap">
+                      <button
+                        onClick={() => handleToggleDisponibilidad(conejo)}
+                        disabled={updatingDisponibilidad === conejo.id}
+                        className={`p-2 rounded-lg transition-colors ${
+                          conejo.disponibilidad === "Disponible"
+                            ? "bg-orange-600 hover:bg-orange-700 text-white"
+                            : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        title={
+                          conejo.disponibilidad === "Disponible"
+                            ? "Marcar no disponible"
+                            : "Marcar disponible"
+                        }
+                      >
+                        {updatingDisponibilidad === conejo.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                        ) : conejo.disponibilidad === "Disponible" ? (
+                          <FaBan />
+                        ) : (
+                          <FaCheck />
+                        )}
+                      </button>
                       <button
                         onClick={() => handleToggleVisible(conejo)}
                         disabled={updatingVisible === conejo.id}
@@ -251,7 +298,29 @@ export default function AdminConejoList({
                   <h3 className="text-white font-mono font-bold text-lg">{conejo.id}</h3>
                   <p className="text-gray-300 text-sm">{conejo.raza}</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap justify-end">
+                  <button
+                    onClick={() => handleToggleDisponibilidad(conejo)}
+                    disabled={updatingDisponibilidad === conejo.id}
+                    className={`p-2 rounded-lg transition-colors ${
+                      conejo.disponibilidad === "Disponible"
+                        ? "bg-orange-600 hover:bg-orange-700 text-white"
+                        : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={
+                      conejo.disponibilidad === "Disponible"
+                        ? "No disponible"
+                        : "Disponible"
+                    }
+                  >
+                    {updatingDisponibilidad === conejo.id ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                    ) : conejo.disponibilidad === "Disponible" ? (
+                      <FaBan />
+                    ) : (
+                      <FaCheck />
+                    )}
+                  </button>
                   <button
                     onClick={() => handleToggleVisible(conejo)}
                     disabled={updatingVisible === conejo.id}

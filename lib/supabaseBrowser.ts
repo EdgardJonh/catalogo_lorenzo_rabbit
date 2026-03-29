@@ -20,8 +20,10 @@ export function createSupabaseBrowserClient(): SupabaseClient {
     if (!supabaseUrl) missing.push("NEXT_PUBLIC_SUPABASE_URL");
     if (!supabaseAnonKey) missing.push("NEXT_PUBLIC_SUPABASE_ANON_KEY");
     throw new Error(
-      `Supabase credentials not configured. Missing: ${missing.join(", ")}. ` +
-        `Please configure these environment variables in Vercel.`
+      `Faltan credenciales de Supabase: ${missing.join(", ")}. ` +
+        `En local: crea .env.local en la raíz del proyecto (puedes copiar .env.example), ` +
+        `pega URL y anon key desde Supabase → Project Settings → API, y reinicia npm run dev. ` +
+        `En producción: configura las mismas variables en el panel de tu hosting (p. ej. Vercel).`
     );
   }
 

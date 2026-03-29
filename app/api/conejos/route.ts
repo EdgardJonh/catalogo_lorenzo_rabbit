@@ -62,16 +62,29 @@ export async function PATCH(req: Request) {
   try {
     const supabase = getSupabaseClient();
     const body = await req.json();
-    const { id, visible } = body;
+    const { id, visible, disponibilidad } = body;
 
-    if (!id || visible === undefined) {
-      return NextResponse.json({ error: 'id y visible requeridos' }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: 'id requerido' }, { status: 400 });
     }
 
-    const { error } = await supabase
-      .from('conejos')
-      .update({ visible })
-      .eq('id', id);
+    const patch: Record<string, boolean | string> = {};
+    if (visible !== undefined) patch.visible = visible;
+    if (disponibilidad !== undefined) {
+      if (disponibilidad !== 'Disponible' && disponibilidad !== 'no Disponible') {
+        return NextResponse.json({ error: 'disponibilidad inválida' }, { status: 400 });
+      }
+      patch.disponibilidad = disponibilidad;
+    }
+
+    if (Object.keys(patch).length === 0) {
+      return NextResponse.json(
+        { error: 'Se requiere visible y/o disponibilidad' },
+        { status: 400 }
+      );
+    }
+
+    const { error } = await supabase.from('conejos').update(patch).eq('id', id);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
     return NextResponse.json({ ok: true });

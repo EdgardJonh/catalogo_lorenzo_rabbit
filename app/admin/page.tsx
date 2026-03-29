@@ -247,6 +247,21 @@ export default function AdminPage() {
     }
   };
 
+  const handleToggleDisponibilidad = async (id: string, disponibilidad: string) => {
+    try {
+      const res = await fetch('/api/conejos', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, disponibilidad }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || 'Error al actualizar disponibilidad');
+      await loadConejos();
+    } catch (error: any) {
+      alert("Error: " + error.message);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm(`¿Estás seguro de eliminar el conejo ${id}?`)) {
       return;
@@ -419,9 +434,16 @@ export default function AdminPage() {
           <div className="bg-black/30 rounded-lg p-4 text-left text-sm text-gray-300">
             <p className="mb-2 font-semibold">Posibles causas:</p>
             <ul className="list-disc list-inside space-y-1">
-              <li>Las variables de entorno no están configuradas en Vercel</li>
-              <li>Las variables tienen nombres incorrectos</li>
-              <li>Necesitas redesplegar después de agregar las variables</li>
+              <li>
+                <strong>Local:</strong> no existe <code className="bg-black/50 px-1 rounded">.env.local</code> o faltan variables — copia{" "}
+                <code className="bg-black/50 px-1 rounded">.env.example</code> a{" "}
+                <code className="bg-black/50 px-1 rounded">.env.local</code> y reinicia{" "}
+                <code className="bg-black/50 px-1 rounded">npm run dev</code>
+              </li>
+              <li>
+                <strong>Producción:</strong> variables no configuradas en el hosting (p. ej. Vercel) o hace falta redesplegar
+              </li>
+              <li>Nombres incorrectos (deben empezar por <code className="bg-black/50 px-1 rounded">NEXT_PUBLIC_</code> para URL y anon key)</li>
             </ul>
             <p className="mt-4 font-semibold">Variables requeridas:</p>
             <ul className="list-disc list-inside space-y-1">
@@ -585,6 +607,7 @@ export default function AdminPage() {
             onDelete={handleDelete}
             onRefresh={loadConejos}
             onToggleVisible={handleToggleVisible}
+            onToggleDisponibilidad={handleToggleDisponibilidad}
           />
         ) : activeTab === "cruzas" ? (
           <AdminCruzaList
