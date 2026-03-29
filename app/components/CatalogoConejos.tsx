@@ -36,6 +36,16 @@ interface CatalogoConejosProps {
 
 type SeccionCatalogo = "todos" | "reproductores" | "nueva-camada" | "otros";
 
+/** Dentro de cada categoría del catálogo, los conejitos con disponibilidad "Disponible" van primero. */
+function ordenarDisponiblesPrimero(lista: Conejo[]): Conejo[] {
+  return [...lista].sort((a, b) => {
+    const aDisp = a.disponibilidad === "Disponible";
+    const bDisp = b.disponibilidad === "Disponible";
+    if (aDisp === bDisp) return 0;
+    return aDisp ? -1 : 1;
+  });
+}
+
 export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
   const [seccionActiva, setSeccionActiva] = useState<SeccionCatalogo>("todos");
 
@@ -102,9 +112,9 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
     });
     
     return {
-      reproductores: reproductoresList,
-      nuevaCamada: nuevaCamadaList,
-      restoConejos: restoConejosList,
+      reproductores: ordenarDisponiblesPrimero(reproductoresList),
+      nuevaCamada: ordenarDisponiblesPrimero(nuevaCamadaList),
+      restoConejos: ordenarDisponiblesPrimero(restoConejosList),
     };
   }, [conejos, fechaLimite]);
 
