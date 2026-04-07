@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { FaTimes, FaWhatsapp, FaMapMarkerAlt, FaMotorcycle, FaSyringe, FaPaw } from "react-icons/fa";
+import { FaTimes, FaWhatsapp, FaMapMarkerAlt, FaMotorcycle, FaSyringe } from "react-icons/fa";
 import { Luckiest_Guy } from "next/font/google";
 
 const luckiestGuy = Luckiest_Guy({ subsets: ["latin"], weight: "400" });
@@ -41,7 +41,7 @@ export default function BienvenidaModal({ open, onClose }: BienvenidaModalProps)
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 py-12 sm:px-6 sm:py-14 md:py-16 min-h-0"
       role="dialog"
       aria-modal="true"
       aria-label="Bienvenida y pasos de reserva"
@@ -53,22 +53,22 @@ export default function BienvenidaModal({ open, onClose }: BienvenidaModalProps)
         aria-hidden="true"
       />
 
-      {/* Panel */}
-      <div className="relative w-full max-w-lg bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-purple-500/40 shadow-2xl overflow-hidden">
+      {/* Panel: altura máxima centrada con aire arriba/abajo; el contenido hace scroll si hace falta */}
+      <div className="relative w-full max-w-lg max-h-[min(calc(100dvh-6rem),44rem)] flex flex-col bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-purple-500/40 shadow-2xl overflow-hidden my-auto">
 
         {/* Banda superior decorativa */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-purple-500 via-orange-400 to-purple-500" />
+        <div className="h-1.5 w-full flex-shrink-0 bg-gradient-to-r from-purple-500 via-orange-400 to-purple-500" />
 
         {/* Botón cerrar */}
         <button
           onClick={cerrar}
-          className="absolute top-3 right-3 p-2 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors"
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-colors"
           aria-label="Cerrar"
         >
           <FaTimes size={14} />
         </button>
 
-        <div className="px-6 pt-6 pb-8 space-y-5">
+        <div className="overflow-y-auto overscroll-y-contain px-6 sm:px-8 pt-8 pb-10 sm:pt-9 sm:pb-11 space-y-5">
 
           {/* Encabezado */}
           <div className="text-center space-y-1">
