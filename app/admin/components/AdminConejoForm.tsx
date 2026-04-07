@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Conejo } from "../../../lib/supabase";
 import { FaSave, FaTimes, FaTrash, FaImage, FaUpload, FaCamera, FaFolder } from "react-icons/fa";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface AdminConejoFormProps {
   conejo: Conejo | null;
@@ -32,7 +33,6 @@ export default function AdminConejoForm({
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [previewPrincipal, setPreviewPrincipal] = useState<string | null>(null);
   const [previewAdicionales, setPreviewAdicionales] = useState<string[]>([]);
@@ -59,11 +59,12 @@ export default function AdminConejoForm({
   };
 
   useEffect(() => {
+    // Resetear archivos pendientes cada vez que cambia el conejo que se edita
+    setPrincipalFile(null);
+    setAdicionalesFiles([]);
+
     if (conejo) {
-      // Modo edición
-      // Convertir fecha de DD-MM-YYYY a YYYY-MM-DD para el input date
       const fechaParaInput = convertDMYToYMD(conejo.fechaNacimiento);
-      
       setFormData({
         id: conejo.id,
         raza: conejo.raza,
@@ -79,13 +80,11 @@ export default function AdminConejoForm({
         categoria: conejo.categoria || (conejo.reproductor ? "reproductor" : "ventas"),
         visible: conejo.visible ?? true,
       });
-      // Cargar previews de imágenes existentes
       setPreviewPrincipal(conejo.fotoPrincipal || null);
       setPreviewAdicionales(conejo.fotosAdicionales || []);
     } else {
-      // Modo creación: resetear formulario y generar ID
       const generateId = () => {
-        const num = Math.floor(Math.random() * 9000) + 1000; // C1000 - C9999
+        const num = Math.floor(Math.random() * 9000) + 1000;
         return `C${num}`;
       };
       setFormData({
@@ -143,63 +142,58 @@ export default function AdminConejoForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validaciones antes de confirmar
+    if (!formData.id || !formData.raza) {
+      toast.error("Por favor completa todos los campos obligatorios (ID y Raza).");
+      return;
+    }
+    if (!formData.fotoPrincipal.trim() && !principalFile) {
+      toast.error("La foto principal es obligatoria. Por favor carga una imagen.");
+      return;
+    }
+
     setLoading(true);
-    setError("");
     setUploading(true);
 
+    const toastId = toast.loading(
+      principalFile || adicionalesFiles.length > 0
+        ? "Subiendo imágenes..."
+        : "Guardando conejito..."
+    );
+
     try {
-      const confirmacion = `¿Está seguro de guardar el conejito ${formData.id}?`;
-      if (!window.confirm(confirmacion)) {
-        setUploading(false);
-        setLoading(false);
-        return;
-      }
-
-      // Validación básica
-      if (!formData.id || !formData.raza) {
-        setError("Por favor completa todos los campos obligatorios");
-        setLoading(false);
-        setUploading(false);
-        return;
-      }
-
-      // Validación de foto principal (obligatoria)
-      if (!formData.fotoPrincipal.trim() && !principalFile) {
-        setError("La foto principal es obligatoria. Por favor carga una imagen.");
-        setLoading(false);
-        setUploading(false);
-        return;
-      }
-
-      // 1) Subir imágenes si hay archivos seleccionados (deferred upload)
+      // 1) Subir imágenes con timestamp en el path para evitar caché
       let finalFotoPrincipal = formData.fotoPrincipal.trim();
       const finalFotosAdicionales: string[] = formData.fotosAdicionales
         .split("\n")
         .map((f) => f.trim())
         .filter((f) => f.length > 0);
 
-      // Subir principal si hay archivo pendiente
+      // Subir foto principal si hay un archivo nuevo seleccionado
       if (principalFile) {
         const safeId = (formData.id || "nuevo").replace(/[^A-Za-z0-9_-]/g, "");
         const ext = principalFile.name.split(".").pop() || "jpg";
-        const path = `principal/${safeId}.${ext}`;
+        // Timestamp evita que el CDN/navegador sirva la foto anterior en caché
+        const path = `principal/${safeId}-${Date.now()}.${ext}`;
         const body = new FormData();
         body.append("file", principalFile);
         body.append("path", path);
         const res = await fetch("/api/upload", { method: "POST", body });
         const text = await res.text();
         if (!res.ok) {
-          let msg = "Error al subir imagen principal";
+          let msg = "Error al subir la foto principal";
           try { msg = JSON.parse(text)?.error || msg; } catch {}
           throw new Error(msg);
         }
         const json = text ? JSON.parse(text) : {};
-        if (!json.url) throw new Error("No se recibió URL de la imagen principal");
+        if (!json.url) throw new Error("No se recibió URL de la foto principal");
         finalFotoPrincipal = json.url;
       }
 
-      // Subir adicionales si hay archivos pendientes
+      // Subir fotos adicionales pendientes
       if (adicionalesFiles.length > 0) {
+        toast.loading("Subiendo fotos adicionales...", { id: toastId });
         const safeId = (formData.id || "nuevo").replace(/[^A-Za-z0-9_-]/g, "");
         for (let i = 0; i < adicionalesFiles.length; i++) {
           const file = adicionalesFiles[i];
@@ -211,7 +205,7 @@ export default function AdminConejoForm({
           const res = await fetch("/api/upload", { method: "POST", body });
           const text = await res.text();
           if (!res.ok) {
-            let msg = `Error al subir imagen adicional (${file.name})`;
+            let msg = `Error al subir foto adicional (${file.name})`;
             try { msg = JSON.parse(text)?.error || msg; } catch {}
             throw new Error(msg);
           }
@@ -221,9 +215,8 @@ export default function AdminConejoForm({
         }
       }
 
-      if (!finalFotoPrincipal) {
-        throw new Error("Debes cargar una foto principal");
-      }
+      // 2) Guardar en base de datos
+      toast.loading("Guardando en base de datos...", { id: toastId });
 
       const porcentajeDescuento = parseFloat(formData.porcentajeDescuento.toString()) || 0;
       const tieneDescuento = porcentajeDescuento > 0;
@@ -235,7 +228,6 @@ export default function AdminConejoForm({
         precio: parseFloat(formData.precio),
         tiene_descuento: tieneDescuento,
         porcentaje_descuento: porcentajeDescuento,
-        // Enviamos en formato DMY; el endpoint convierte a ISO
         fechaNacimiento: formData.fechaNacimiento,
         disponibilidad: formData.disponibilidad,
         fotoPrincipal: finalFotoPrincipal,
@@ -245,18 +237,18 @@ export default function AdminConejoForm({
         visible: formData.visible,
       };
 
-      const res = await fetch('/api/conejos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/conejos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(conejoData),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || 'Error al guardar');
+      if (!res.ok) throw new Error(json?.error || "Error al guardar");
 
-      // Limpiar archivos en memoria y mantener previews actualizadas
+      // 3) Actualizar estado local con las URLs definitivas
       setPrincipalFile(null);
       setAdicionalesFiles([]);
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         fotoPrincipal: finalFotoPrincipal,
         fotosAdicionales: finalFotosAdicionales.join("\n"),
@@ -264,9 +256,14 @@ export default function AdminConejoForm({
       setPreviewPrincipal(finalFotoPrincipal || null);
       setPreviewAdicionales(finalFotosAdicionales);
 
+      toast.success(
+        conejo ? `Conejito ${formData.id} actualizado correctamente` : `Conejito ${formData.id} creado correctamente`,
+        { id: toastId }
+      );
+
       onSave();
     } catch (err: any) {
-      setError(err.message || "Error al guardar el conejo");
+      toast.error(err.message || "Error al guardar el conejito", { id: toastId });
     } finally {
       setUploading(false);
       setLoading(false);
@@ -345,12 +342,6 @@ export default function AdminConejoForm({
           <FaTimes />
         </button>
       </div>
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-200">
-          {error}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

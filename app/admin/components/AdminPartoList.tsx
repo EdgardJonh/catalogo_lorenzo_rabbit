@@ -145,11 +145,7 @@ export default function AdminPartoList({
                         <FaEdit />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm(`¿Eliminar parto ${p.id}?`)) {
-                            onDelete(p.id);
-                          }
-                        }}
+                        onClick={() => onDelete(p.id)}
                         className="p-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
                         title="Eliminar"
                       >
@@ -191,11 +187,7 @@ export default function AdminPartoList({
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(`¿Eliminar parto ${p.id}?`)) {
-                        onDelete(p.id);
-                      }
-                    }}
+                    onClick={() => onDelete(p.id)}
                     className="p-2 bg-red-600 hover:bg-red-700 text-white rounded"
                   >
                     <FaTrash />

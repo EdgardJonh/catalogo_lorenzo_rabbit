@@ -180,11 +180,7 @@ export default function AdminCruzaList({
                         <FaEdit />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm(`¿Eliminar cruza ${cruza.id}?`)) {
-                            onDelete(cruza.id);
-                          }
-                        }}
+                        onClick={() => onDelete(cruza.id)}
                         className="p-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
                         title="Eliminar"
                       >
@@ -230,11 +226,7 @@ export default function AdminCruzaList({
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(`¿Eliminar cruza ${cruza.id}?`)) {
-                        onDelete(cruza.id);
-                      }
-                    }}
+                    onClick={() => onDelete(cruza.id)}
                     className="p-2 bg-red-600 hover:bg-red-700 text-white rounded"
                   >
                     <FaTrash />

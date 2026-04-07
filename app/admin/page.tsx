@@ -21,6 +21,7 @@ import AdminPartoForm from "./components/AdminPartoForm";
 import AdminPartoList from "./components/AdminPartoList";
 import AdminAuth from "./components/AdminAuth";
 import { FaLock, FaUnlock } from "react-icons/fa";
+import { toast } from "sonner";
 
 // Forzar renderizado dinámico (no prerenderizar)
 export const dynamic = 'force-dynamic';
@@ -242,8 +243,9 @@ export default function AdminPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || 'Error al actualizar visibilidad');
       await loadConejos();
+      toast.success(visible ? `${id} visible en catálogo` : `${id} oculto del catálogo`);
     } catch (error: any) {
-      alert("Error: " + error.message);
+      toast.error("Error: " + error.message);
     }
   };
 
@@ -257,25 +259,32 @@ export default function AdminPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || 'Error al actualizar disponibilidad');
       await loadConejos();
+      toast.success(`${id} marcado como "${disponibilidad}"`);
     } catch (error: any) {
-      alert("Error: " + error.message);
+      toast.error("Error: " + error.message);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(`¿Estás seguro de eliminar el conejo ${id}?`)) {
-      return;
-    }
-
-    try {
-      const res = await fetch(`/api/conejos?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || 'Error al eliminar');
-      await loadConejos();
-      alert("Conejo eliminado exitosamente");
-    } catch (error: any) {
-      alert("Error: " + error.message);
-    }
+    toast(`¿Eliminar el conejito ${id}?`, {
+      action: {
+        label: "Eliminar",
+        onClick: async () => {
+          const toastId = toast.loading(`Eliminando ${id}...`);
+          try {
+            const res = await fetch(`/api/conejos?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+            const json = await res.json();
+            if (!res.ok) throw new Error(json?.error || 'Error al eliminar');
+            await loadConejos();
+            toast.success(`Conejito ${id} eliminado`, { id: toastId });
+          } catch (error: any) {
+            toast.error("Error: " + error.message, { id: toastId });
+          }
+        },
+      },
+      cancel: { label: "Cancelar", onClick: () => {} },
+      duration: 8000,
+    });
   };
 
   const handleSave = async () => {
@@ -301,19 +310,25 @@ export default function AdminPage() {
   };
 
   const handleDeleteCruza = async (id: string) => {
-    if (!confirm(`¿Estás seguro de eliminar la cruza ${id}?`)) {
-      return;
-    }
-
-    try {
-      const res = await fetch(`/api/cruzas?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || 'Error al eliminar');
-      await loadCruzas();
-      alert("Cruza eliminada exitosamente");
-    } catch (error: any) {
-      alert("Error: " + error.message);
-    }
+    toast(`¿Eliminar la cruza ${id}?`, {
+      action: {
+        label: "Eliminar",
+        onClick: async () => {
+          const toastId = toast.loading(`Eliminando cruza ${id}...`);
+          try {
+            const res = await fetch(`/api/cruzas?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+            const json = await res.json();
+            if (!res.ok) throw new Error(json?.error || 'Error al eliminar');
+            await loadCruzas();
+            toast.success(`Cruza ${id} eliminada`, { id: toastId });
+          } catch (error: any) {
+            toast.error("Error: " + error.message, { id: toastId });
+          }
+        },
+      },
+      cancel: { label: "Cancelar", onClick: () => {} },
+      duration: 8000,
+    });
   };
 
   const handleSaveCruza = async () => {
@@ -338,21 +353,25 @@ export default function AdminPage() {
   };
 
   const handleDeleteGestacion = async (id: string) => {
-    if (!confirm(`¿Estás seguro de eliminar la gestación ${id}?`)) {
-      return;
-    }
-
-    try {
-      const res = await fetch(`/api/gestaciones?id=${encodeURIComponent(id)}`, {
-        method: "DELETE",
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || "Error al eliminar");
-      await loadGestaciones();
-      alert("Gestación eliminada exitosamente");
-    } catch (error: any) {
-      alert("Error: " + error.message);
-    }
+    toast(`¿Eliminar la gestación ${id}?`, {
+      action: {
+        label: "Eliminar",
+        onClick: async () => {
+          const toastId = toast.loading(`Eliminando gestación ${id}...`);
+          try {
+            const res = await fetch(`/api/gestaciones?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+            const json = await res.json();
+            if (!res.ok) throw new Error(json?.error || "Error al eliminar");
+            await loadGestaciones();
+            toast.success(`Gestación ${id} eliminada`, { id: toastId });
+          } catch (error: any) {
+            toast.error("Error: " + error.message, { id: toastId });
+          }
+        },
+      },
+      cancel: { label: "Cancelar", onClick: () => {} },
+      duration: 8000,
+    });
   };
 
   const handleSaveGestacion = async () => {
@@ -377,21 +396,25 @@ export default function AdminPage() {
   };
 
   const handleDeleteParto = async (id: string) => {
-    if (!confirm(`¿Estás seguro de eliminar el parto ${id}?`)) {
-      return;
-    }
-
-    try {
-      const res = await fetch(`/api/partos?id=${encodeURIComponent(id)}`, {
-        method: "DELETE",
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || "Error al eliminar");
-      await loadPartos();
-      alert("Parto eliminado exitosamente");
-    } catch (error: any) {
-      alert("Error: " + error.message);
-    }
+    toast(`¿Eliminar el parto ${id}?`, {
+      action: {
+        label: "Eliminar",
+        onClick: async () => {
+          const toastId = toast.loading(`Eliminando parto ${id}...`);
+          try {
+            const res = await fetch(`/api/partos?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+            const json = await res.json();
+            if (!res.ok) throw new Error(json?.error || "Error al eliminar");
+            await loadPartos();
+            toast.success(`Parto ${id} eliminado`, { id: toastId });
+          } catch (error: any) {
+            toast.error("Error: " + error.message, { id: toastId });
+          }
+        },
+      },
+      cancel: { label: "Cancelar", onClick: () => {} },
+      duration: 8000,
+    });
   };
 
   const handleSaveParto = async () => {

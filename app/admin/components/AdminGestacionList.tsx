@@ -140,11 +140,7 @@ export default function AdminGestacionList({
                         <FaEdit />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm(`¿Eliminar gestación ${g.id}?`)) {
-                            onDelete(g.id);
-                          }
-                        }}
+                        onClick={() => onDelete(g.id)}
                         className="p-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
                         title="Eliminar"
                       >
@@ -186,11 +182,7 @@ export default function AdminGestacionList({
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(`¿Eliminar gestación ${g.id}?`)) {
-                        onDelete(g.id);
-                      }
-                    }}
+                    onClick={() => onDelete(g.id)}
                     className="p-2 bg-red-600 hover:bg-red-700 text-white rounded"
                   >
                     <FaTrash />

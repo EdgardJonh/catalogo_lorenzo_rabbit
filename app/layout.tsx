@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@fontsource/inter";
 import WhatsappButton from "./components/WhatsappButton";
+import { Toaster } from "sonner";
 
 
 
@@ -46,6 +47,7 @@ export default function RootLayout({
       <body className="font-sans bg-gray-50 text-gray-900">
         {children}
         <WhatsappButton />
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );
