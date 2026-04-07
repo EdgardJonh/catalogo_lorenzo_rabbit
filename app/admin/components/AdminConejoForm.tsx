@@ -11,6 +11,12 @@ interface AdminConejoFormProps {
   onCancel: () => void;
 }
 
+/** Fondo sólido + color-scheme y options con contraste (evita texto blanco invisible en el desplegable en Windows/Chrome). */
+const selectFieldClass =
+  "w-full px-4 py-2 rounded-lg border border-white/20 bg-slate-900 text-gray-100 " +
+  "focus:outline-none focus:ring-2 focus:ring-purple-500 " +
+  "[color-scheme:dark] [&_option]:bg-slate-900 [&_option]:text-gray-100";
+
 export default function AdminConejoForm({
   conejo,
   onSave,
@@ -370,7 +376,7 @@ export default function AdminConejoForm({
               value={formData.raza}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={selectFieldClass}
             >
               <option value="">Selecciona una raza</option>
               <option value="Mini Lop">Mini Lop</option>
@@ -386,10 +392,10 @@ export default function AdminConejoForm({
               name="sexo"
               value={formData.sexo}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={selectFieldClass}
             >
-              <option className="text-gray-700" value="Macho">Macho</option>
-              <option className="text-gray-700" value="Hembra">Hembra</option>
+              <option value="Macho">Macho</option>
+              <option value="Hembra">Hembra</option>
             </select>
           </div>
 
@@ -431,7 +437,7 @@ export default function AdminConejoForm({
               name="disponibilidad"
               value={formData.disponibilidad}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className={selectFieldClass}
             >
               <option value="Disponible">Disponible</option>
               <option value="no Disponible">No Disponible</option>
@@ -476,7 +482,7 @@ export default function AdminConejoForm({
             name="categoria"
             value={formData.categoria}
             onChange={handleChange}
-            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className={selectFieldClass}
           >
             <option value="ventas">Ventas</option>
             <option value="reproductor">Reproductor</option>

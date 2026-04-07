@@ -8,6 +8,7 @@ import styles  from "../styles/home.module.css";
 // import Festividad from "./Festividad";
 import Direccion from "./Direccion";
 import CatalogoMenu from "./CatalogoMenu";
+import BienvenidaModal from "./BienvenidaModal";
 
 interface Conejo {
   id: string;
@@ -49,6 +50,7 @@ function ordenarDisponiblesPrimero(lista: Conejo[]): Conejo[] {
 export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
   const [seccionActiva, setSeccionActiva] = useState<SeccionCatalogo>("todos");
   const [enLinea, setEnLinea] = useState<boolean | undefined>(undefined);
+  const [mostrarBienvenida, setMostrarBienvenida] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     const sync = () => setEnLinea(navigator.onLine);
@@ -147,6 +149,10 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
 
   return (
     <section>
+      <BienvenidaModal
+        open={mostrarBienvenida}
+        onClose={() => setMostrarBienvenida(false)}
+      />
       {/* Header con Logo */}
       <div className="text-center mb-8">
         {/* Logo del Criadero con fondo circular naranja */}
@@ -187,6 +193,16 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
          <Direccion />
          
          </div>
+
+      {/* Botón para abrir instrucciones de reserva */}
+      <div className="flex justify-center mb-6">
+        <button
+          onClick={() => setMostrarBienvenida(true)}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/40 hover:border-purple-400/70 text-purple-200 hover:text-white text-sm font-medium transition-all"
+        >
+          <span>🐇</span> ¿Cómo hacer una reserva?
+        </button>
+      </div>
 
       {/* Menú y listas: solo con conexión (el catálogo en vivo no debe mostrarse offline ni datos en caché obsoletos) */}
       {!sinConexion && (
