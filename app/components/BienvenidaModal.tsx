@@ -139,7 +139,7 @@ export default function BienvenidaModal({ open, onClose }: BienvenidaModalProps)
             <div className="flex items-start gap-2">
               <FaMotorcycle className="text-orange-400 mt-0.5 flex-shrink-0" size={13} />
               <p className="text-gray-300 text-xs">
-                <span className="text-white font-medium">Despacho a domicilio u otro lugar</span> — $10.000 pesos (coordinar por WhatsApp).
+                <span className="text-white font-medium">Despacho a domicilio u otro lugar</span> — $10.000 adicional (coordinar por WhatsApp).
               </p>
             </div>
           </div>
