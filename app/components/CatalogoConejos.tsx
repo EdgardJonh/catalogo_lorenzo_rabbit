@@ -159,11 +159,11 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
         <div className="flex justify-center mb-4">
           <span className="inline-flex items-center justify-center rounded-full bg-orange-500 w-28 h-28">
             <Image
-              src="/logos/logo.png"
+              src="/logos/lorenzo-png.png"
               alt="Logo del Criadero"
               width={90}
               height={90}
-              className="h-20 w-20"
+              className="h-20 w-20 object-contain"
               priority
             />
           </span>
