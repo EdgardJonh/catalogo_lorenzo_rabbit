@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  swcMinify: true,
   // Permitir acceso desde otros dispositivos en la red local
   allowedDevOrigins: [
     '192.168.0.0/16',  // Red local común (192.168.x.x)
