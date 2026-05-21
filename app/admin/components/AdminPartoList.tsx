@@ -1,7 +1,10 @@
 "use client";
-import { Parto, Cruza } from "../../../lib/supabase";
-import { FaEdit, FaTrash, FaSyncAlt, FaSearch, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useState, useMemo, useEffect } from "react";
+import { Parto, Cruza } from "../../../lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Pencil, Trash2, RefreshCw, Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 interface AdminPartoListProps {
   partos: Parto[];
@@ -12,14 +15,7 @@ interface AdminPartoListProps {
   onRefresh: () => void;
 }
 
-export default function AdminPartoList({
-  partos,
-  cruzas,
-  loading,
-  onEdit,
-  onDelete,
-  onRefresh,
-}: AdminPartoListProps) {
+export default function AdminPartoList({ partos, cruzas, loading, onEdit, onDelete, onRefresh }: AdminPartoListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -30,213 +26,127 @@ export default function AdminPartoList({
     return map;
   }, [cruzas]);
 
-  const getCruzaInfo = (idCruza: string) => {
-    const cruza = cruzasMap.get(idCruza);
-    if (!cruza) return idCruza;
-    return `${cruza.id} (${cruza.fechaCruza})`;
+  const getCruzaInfo = (id: string) => {
+    const c = cruzasMap.get(id);
+    return c ? `${c.id} (${c.fechaCruza})` : id;
   };
 
   const filteredPartos = useMemo(() => {
     if (!searchTerm) return partos;
-    const term = searchTerm.toLowerCase();
-    return partos.filter((p) => {
-      const cruzaInfo = getCruzaInfo(p.idCruza).toLowerCase();
-      return (
-        p.id.toLowerCase().includes(term) ||
-        cruzaInfo.includes(term) ||
-        p.fechaParto.toLowerCase().includes(term)
-      );
-    });
+    const t = searchTerm.toLowerCase();
+    return partos.filter((p) =>
+      p.id.toLowerCase().includes(t) ||
+      getCruzaInfo(p.idCruza).toLowerCase().includes(t) ||
+      p.fechaParto.toLowerCase().includes(t)
+    );
   }, [partos, searchTerm, cruzasMap]);
 
   const totalPages = Math.ceil(filteredPartos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedPartos = filteredPartos.slice(startIndex, endIndex);
+  const paginatedPartos = filteredPartos.slice(startIndex, startIndex + itemsPerPage);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [totalPages, currentPage]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm]);
+  useEffect(() => { if (currentPage > totalPages && totalPages > 0) setCurrentPage(1); }, [totalPages, currentPage]);
 
   const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    if (page >= 1 && page <= totalPages) { setCurrentPage(page); window.scrollTo({ top: 0, behavior: "smooth" }); }
   };
 
   if (loading) {
     return (
-      <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-        <p className="text-white">Cargando partos...</p>
-      </div>
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-16 gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Cargando partos...</p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-      {/* Header con búsqueda */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Buscar por ID, cruza o fecha..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
+    <Card>
+      <CardHeader className="pb-4">
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Buscar por ID, cruza o fecha..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-9" />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">{filteredPartos.length} partos</span>
+            <Button variant="outline" size="sm" onClick={onRefresh}>
+              <RefreshCw className="h-4 w-4 mr-1.5" /> Actualizar
+            </Button>
+          </div>
         </div>
-        <button
-          onClick={onRefresh}
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors"
-        >
-          <FaSyncAlt />
-          Actualizar
-        </button>
-      </div>
+      </CardHeader>
 
-      {/* Tabla Desktop */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-white/20">
-              <th className="pb-3 text-gray-300 font-semibold">ID</th>
-              <th className="pb-3 text-gray-300 font-semibold">Cruza</th>
-              <th className="pb-3 text-gray-300 font-semibold">Fecha Parto</th>
-              <th className="pb-3 text-gray-300 font-semibold">Gazapos Totales</th>
-              <th className="pb-3 text-gray-300 font-semibold">Gazapos Vivos</th>
-              <th className="pb-3 text-gray-300 font-semibold text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedPartos.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="py-8 text-center text-gray-400">
-                  {searchTerm ? "No se encontraron partos" : "No hay partos registrados"}
-                </td>
+      <CardContent className="p-0">
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                {["ID", "Cruza", "Fecha Parto", "Gazapos Totales", "Gazapos Vivos", ""].map((h) => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">{h}</th>
+                ))}
               </tr>
-            ) : (
-              paginatedPartos.map((p) => (
-                <tr key={p.id} className="border-b border-white/10 hover:bg-white/5">
-                  <td className="py-3 text-white font-mono">{p.id}</td>
-                  <td className="py-3 text-gray-300">{getCruzaInfo(p.idCruza)}</td>
-                  <td className="py-3 text-gray-300">{p.fechaParto}</td>
-                  <td className="py-3 text-gray-300">
-                    {p.gazaposTotales ?? "-"}
-                  </td>
-                  <td className="py-3 text-gray-300">
-                    {p.gazaposVivos ?? "-"}
-                  </td>
-                  <td className="py-3 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => onEdit(p)}
-                        className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
-                        title="Editar"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => onDelete(p.id)}
-                        className="p-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
-                        title="Eliminar"
-                      >
-                        <FaTrash />
-                      </button>
+            </thead>
+            <tbody>
+              {paginatedPartos.length === 0 ? (
+                <tr><td colSpan={6} className="py-12 text-center text-muted-foreground">{searchTerm ? "No se encontraron partos" : "No hay partos registrados"}</td></tr>
+              ) : paginatedPartos.map((p) => (
+                <tr key={p.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-3 font-mono font-semibold text-foreground">{p.id}</td>
+                  <td className="px-4 py-3 text-foreground">{getCruzaInfo(p.idCruza)}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{p.fechaParto}</td>
+                  <td className="px-4 py-3 text-center font-semibold text-foreground">{p.gazaposTotales ?? "—"}</td>
+                  <td className="px-4 py-3 text-center font-semibold text-primary">{p.gazaposVivos ?? "—"}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-1.5">
+                      <Button variant="outline" size="icon" onClick={() => onEdit(p)} title="Editar"><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="outline" size="icon" onClick={() => onDelete(p.id)} title="Eliminar" className="text-destructive hover:text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Vista Mobile */}
-      <div className="md:hidden space-y-4">
-        {paginatedPartos.length === 0 ? (
-          <div className="text-center text-gray-400 py-8">
-            {searchTerm ? "No se encontraron partos" : "No hay partos registrados"}
-          </div>
-        ) : (
-          paginatedPartos.map((p) => (
-            <div
-              key={p.id}
-              className="bg-white/5 rounded-lg p-4 border border-white/10"
-            >
-              <div className="flex justify-between items-start mb-3">
+        <div className="md:hidden divide-y divide-border">
+          {paginatedPartos.length === 0 ? (
+            <div className="py-12 text-center text-muted-foreground">{searchTerm ? "No se encontraron partos" : "No hay partos registrados"}</div>
+          ) : paginatedPartos.map((p) => (
+            <div key={p.id} className="p-4 space-y-2">
+              <div className="flex items-start justify-between gap-2">
                 <div>
-                  <h3 className="text-white font-mono font-semibold">{p.id}</h3>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {getCruzaInfo(p.idCruza)}
-                  </p>
+                  <p className="font-mono font-bold text-foreground">{p.id}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{getCruzaInfo(p.idCruza)}</p>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => onEdit(p)}
-                    className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    onClick={() => onDelete(p.id)}
-                    className="p-2 bg-red-600 hover:bg-red-700 text-white rounded"
-                  >
-                    <FaTrash />
-                  </button>
+                <div className="flex gap-1.5">
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onEdit(p)}><Pencil className="h-3.5 w-3.5" /></Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => onDelete(p.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>
               </div>
-              <div className="space-y-2 text-sm text-gray-300">
-                <div>
-                  <span className="font-semibold">Fecha Parto:</span>{" "}
-                  {p.fechaParto}
-                </div>
-                <div>
-                  <span className="font-semibold">Gazapos Totales:</span>{" "}
-                  {p.gazaposTotales ?? "-"}
-                </div>
-                <div>
-                  <span className="font-semibold">Gazapos Vivos:</span>{" "}
-                  {p.gazaposVivos ?? "-"}
-                </div>
+              <div className="text-sm space-y-1">
+                <div><span className="text-muted-foreground">Fecha Parto: </span><span className="text-foreground">{p.fechaParto}</span></div>
+                <div><span className="text-muted-foreground">Gazapos totales: </span><span className="font-semibold text-foreground">{p.gazaposTotales ?? "—"}</span></div>
+                <div><span className="text-muted-foreground">Gazapos vivos: </span><span className="font-semibold text-primary">{p.gazaposVivos ?? "—"}</span></div>
               </div>
             </div>
-          ))
-        )}
-      </div>
-
-      {/* Paginación */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-6">
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="p-2 bg-white/10 hover:bg-white/20 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <FaChevronLeft />
-          </button>
-          <span className="text-white px-4">
-            Página {currentPage} de {totalPages}
-          </span>
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="p-2 bg-white/10 hover:bg-white/20 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <FaChevronRight />
-          </button>
+          ))}
         </div>
-      )}
-    </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">{startIndex + 1}–{Math.min(startIndex + itemsPerPage, filteredPartos.length)} de {filteredPartos.length}</p>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
+              <span className="px-3 text-sm text-muted-foreground">{currentPage} / {totalPages}</span>
+              <Button variant="outline" size="icon" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
-
-

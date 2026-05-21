@@ -1,7 +1,11 @@
 "use client";
-import { Cruza, Conejo } from "../../../lib/supabase";
-import { FaEdit, FaTrash, FaSyncAlt, FaSearch, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useState, useMemo, useEffect } from "react";
+import { Cruza, Conejo } from "../../../lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Pencil, Trash2, RefreshCw, Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 interface AdminCruzaListProps {
   cruzas: Cruza[];
@@ -12,276 +16,156 @@ interface AdminCruzaListProps {
   onRefresh: () => void;
 }
 
-export default function AdminCruzaList({
-  cruzas,
-  conejos,
-  loading,
-  onEdit,
-  onDelete,
-  onRefresh,
-}: AdminCruzaListProps) {
+const estadoBadge: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  programada: "secondary",
+  en_proceso: "default",
+  completada: "outline",
+  cancelada: "destructive",
+};
+
+export default function AdminCruzaList({ cruzas, conejos, loading, onEdit, onDelete, onRefresh }: AdminCruzaListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Crear mapa de conejos para búsqueda rápida
   const conejosMap = useMemo(() => {
     const map = new Map<string, Conejo>();
     conejos.forEach((c) => map.set(c.id, c));
     return map;
   }, [conejos]);
 
-  // Función para obtener nombre del conejo
   const getConejoInfo = (id: string) => {
-    const conejo = conejosMap.get(id);
-    return conejo ? `${conejo.id} - ${conejo.raza}` : id;
-  };
-
-  // Función para obtener color del estado
-  const getEstadoColor = (estado: string) => {
-    switch (estado) {
-      case "programada":
-        return "bg-blue-500/20 text-blue-300 border-blue-500/50";
-      case "en_proceso":
-        return "bg-yellow-500/20 text-yellow-300 border-yellow-500/50";
-      case "completada":
-        return "bg-green-500/20 text-green-300 border-green-500/50";
-      case "cancelada":
-        return "bg-red-500/20 text-red-300 border-red-500/50";
-      default:
-        return "bg-gray-500/20 text-gray-300 border-gray-500/50";
-    }
+    const c = conejosMap.get(id);
+    return c ? `${c.id} — ${c.raza}` : id;
   };
 
   const filteredCruzas = useMemo(() => {
     if (!searchTerm) return cruzas;
-    
-    const term = searchTerm.toLowerCase();
-    return cruzas.filter((cruza) => {
-      const padre = getConejoInfo(cruza.idPadre).toLowerCase();
-      const madre = getConejoInfo(cruza.idMadre).toLowerCase();
-      return (
-        cruza.id.toLowerCase().includes(term) ||
-        padre.includes(term) ||
-        madre.includes(term) ||
-        cruza.estado.toLowerCase().includes(term) ||
-        cruza.fechaCruza.toLowerCase().includes(term)
-      );
-    });
+    const t = searchTerm.toLowerCase();
+    return cruzas.filter((c) =>
+      c.id.toLowerCase().includes(t) ||
+      getConejoInfo(c.idPadre).toLowerCase().includes(t) ||
+      getConejoInfo(c.idMadre).toLowerCase().includes(t) ||
+      c.estado.toLowerCase().includes(t)
+    );
   }, [cruzas, searchTerm, conejosMap]);
 
-  // Calcular paginación
   const totalPages = Math.ceil(filteredCruzas.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedCruzas = filteredCruzas.slice(startIndex, endIndex);
+  const paginatedCruzas = filteredCruzas.slice(startIndex, startIndex + itemsPerPage);
 
-  // Resetear página cuando cambia el filtro
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [totalPages, currentPage]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm]);
+  useEffect(() => { if (currentPage > totalPages && totalPages > 0) setCurrentPage(1); }, [totalPages, currentPage]);
 
   const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    if (page >= 1 && page <= totalPages) { setCurrentPage(page); window.scrollTo({ top: 0, behavior: "smooth" }); }
   };
 
   if (loading) {
     return (
-      <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-        <p className="text-white">Cargando cruzas...</p>
-      </div>
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-16 gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Cargando cruzas...</p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-      {/* Header con búsqueda */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Buscar por ID, padre, madre o estado..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
+    <Card>
+      <CardHeader className="pb-4">
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Buscar por ID, padre, madre o estado..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-9" />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">{filteredCruzas.length} cruzas</span>
+            <Button variant="outline" size="sm" onClick={onRefresh}>
+              <RefreshCw className="h-4 w-4 mr-1.5" /> Actualizar
+            </Button>
+          </div>
         </div>
-        <button
-          onClick={onRefresh}
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg flex items-center gap-2 transition-colors"
-        >
-          <FaSyncAlt />
-          Actualizar
-        </button>
-      </div>
+      </CardHeader>
 
-      {/* Tabla Desktop */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-white/20">
-              <th className="pb-3 text-gray-300 font-semibold">ID</th>
-              <th className="pb-3 text-gray-300 font-semibold">Padre</th>
-              <th className="pb-3 text-gray-300 font-semibold">Madre</th>
-              <th className="pb-3 text-gray-300 font-semibold">Fecha Cruza</th>
-              <th className="pb-3 text-gray-300 font-semibold">Parto Esperado</th>
-              <th className="pb-3 text-gray-300 font-semibold">Parto Real</th>
-              <th className="pb-3 text-gray-300 font-semibold">Estado</th>
-              <th className="pb-3 text-gray-300 font-semibold text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedCruzas.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="py-8 text-center text-gray-400">
-                  {searchTerm ? "No se encontraron cruzas" : "No hay cruzas registradas"}
-                </td>
+      <CardContent className="p-0">
+        {/* Desktop */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                {["ID", "Padre", "Madre", "Fecha Cruza", "Parto Esperado", "Parto Real", "Estado", ""].map((h) => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">{h}</th>
+                ))}
               </tr>
-            ) : (
-              paginatedCruzas.map((cruza) => (
-                <tr key={cruza.id} className="border-b border-white/10 hover:bg-white/5">
-                  <td className="py-3 text-white font-mono">{cruza.id}</td>
-                  <td className="py-3 text-gray-300">{getConejoInfo(cruza.idPadre)}</td>
-                  <td className="py-3 text-gray-300">{getConejoInfo(cruza.idMadre)}</td>
-                  <td className="py-3 text-gray-300">{cruza.fechaCruza}</td>
-                  <td className="py-3 text-gray-300">
-                    {cruza.fechaPartoEsperado || "-"}
+            </thead>
+            <tbody>
+              {paginatedCruzas.length === 0 ? (
+                <tr><td colSpan={8} className="py-12 text-center text-muted-foreground">{searchTerm ? "No se encontraron cruzas" : "No hay cruzas registradas"}</td></tr>
+              ) : paginatedCruzas.map((c) => (
+                <tr key={c.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-3 font-mono font-semibold text-foreground">{c.id}</td>
+                  <td className="px-4 py-3 text-foreground">{getConejoInfo(c.idPadre)}</td>
+                  <td className="px-4 py-3 text-foreground">{getConejoInfo(c.idMadre)}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{c.fechaCruza}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{c.fechaPartoEsperado || "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{c.fechaPartoReal || "—"}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant={estadoBadge[c.estado] ?? "outline"}>
+                      {c.estado.replace("_", " ")}
+                    </Badge>
                   </td>
-                  <td className="py-3 text-gray-300">
-                    {cruza.fechaPartoReal || "-"}
-                  </td>
-                  <td className="py-3">
-                    <span
-                      className={`px-2 py-1 rounded text-xs border ${getEstadoColor(
-                        cruza.estado
-                      )}`}
-                    >
-                      {cruza.estado.replace("_", " ").toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="py-3 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => onEdit(cruza)}
-                        className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
-                        title="Editar"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => onDelete(cruza.id)}
-                        className="p-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
-                        title="Eliminar"
-                      >
-                        <FaTrash />
-                      </button>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-1.5">
+                      <Button variant="outline" size="icon" onClick={() => onEdit(c)} title="Editar"><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="outline" size="icon" onClick={() => onDelete(c.id)} title="Eliminar" className="text-destructive hover:text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Vista Mobile */}
-      <div className="md:hidden space-y-4">
-        {paginatedCruzas.length === 0 ? (
-          <div className="text-center text-gray-400 py-8">
-            {searchTerm ? "No se encontraron cruzas" : "No hay cruzas registradas"}
-          </div>
-        ) : (
-          paginatedCruzas.map((cruza) => (
-            <div
-              key={cruza.id}
-              className="bg-white/5 rounded-lg p-4 border border-white/10"
-            >
-              <div className="flex justify-between items-start mb-3">
+        {/* Mobile */}
+        <div className="md:hidden divide-y divide-border">
+          {paginatedCruzas.length === 0 ? (
+            <div className="py-12 text-center text-muted-foreground">{searchTerm ? "No se encontraron cruzas" : "No hay cruzas registradas"}</div>
+          ) : paginatedCruzas.map((c) => (
+            <div key={c.id} className="p-4 space-y-3">
+              <div className="flex items-start justify-between gap-2">
                 <div>
-                  <h3 className="text-white font-mono font-semibold">{cruza.id}</h3>
-                  <span
-                    className={`inline-block mt-1 px-2 py-1 rounded text-xs border ${getEstadoColor(
-                      cruza.estado
-                    )}`}
-                  >
-                    {cruza.estado.replace("_", " ").toUpperCase()}
-                  </span>
+                  <p className="font-mono font-bold text-foreground">{c.id}</p>
+                  <Badge variant={estadoBadge[c.estado] ?? "outline"} className="mt-1">{c.estado.replace("_", " ")}</Badge>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => onEdit(cruza)}
-                    className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    onClick={() => onDelete(cruza.id)}
-                    className="p-2 bg-red-600 hover:bg-red-700 text-white rounded"
-                  >
-                    <FaTrash />
-                  </button>
+                <div className="flex gap-1.5">
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onEdit(c)}><Pencil className="h-3.5 w-3.5" /></Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => onDelete(c.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>
               </div>
-              <div className="space-y-2 text-sm text-gray-300">
-                <div>
-                  <span className="font-semibold">Padre:</span> {getConejoInfo(cruza.idPadre)}
-                </div>
-                <div>
-                  <span className="font-semibold">Madre:</span> {getConejoInfo(cruza.idMadre)}
-                </div>
-                <div>
-                  <span className="font-semibold">Fecha Cruza:</span> {cruza.fechaCruza}
-                </div>
-                {cruza.fechaPartoEsperado && (
-                  <div>
-                    <span className="font-semibold">Parto Esperado:</span> {cruza.fechaPartoEsperado}
-                  </div>
-                )}
-                {cruza.fechaPartoReal && (
-                  <div>
-                    <span className="font-semibold">Parto Real:</span> {cruza.fechaPartoReal}
-                  </div>
-                )}
+              <div className="space-y-1 text-sm">
+                <div><span className="text-muted-foreground">Padre: </span><span className="text-foreground">{getConejoInfo(c.idPadre)}</span></div>
+                <div><span className="text-muted-foreground">Madre: </span><span className="text-foreground">{getConejoInfo(c.idMadre)}</span></div>
+                <div><span className="text-muted-foreground">Fecha Cruza: </span><span className="text-foreground">{c.fechaCruza}</span></div>
+                {c.fechaPartoEsperado && <div><span className="text-muted-foreground">Parto Esperado: </span><span className="text-foreground">{c.fechaPartoEsperado}</span></div>}
+                {c.fechaPartoReal && <div><span className="text-muted-foreground">Parto Real: </span><span className="text-foreground">{c.fechaPartoReal}</span></div>}
               </div>
             </div>
-          ))
-        )}
-      </div>
-
-      {/* Paginación */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-6">
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="p-2 bg-white/10 hover:bg-white/20 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <FaChevronLeft />
-          </button>
-          <span className="text-white px-4">
-            Página {currentPage} de {totalPages}
-          </span>
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="p-2 bg-white/10 hover:bg-white/20 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <FaChevronRight />
-          </button>
+          ))}
         </div>
-      )}
-    </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">{startIndex + 1}–{Math.min(startIndex + itemsPerPage, filteredCruzas.length)} de {filteredCruzas.length}</p>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
+              <span className="px-3 text-sm text-muted-foreground">{currentPage} / {totalPages}</span>
+              <Button variant="outline" size="icon" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
-

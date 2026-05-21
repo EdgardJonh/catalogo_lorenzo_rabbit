@@ -1,18 +1,14 @@
 "use client";
-import { Conejo } from "../../../lib/supabase";
-import {
-  FaEdit,
-  FaTrash,
-  FaSyncAlt,
-  FaSearch,
-  FaEye,
-  FaEyeSlash,
-  FaChevronLeft,
-  FaChevronRight,
-  FaCheck,
-  FaBan,
-} from "react-icons/fa";
 import { useState, useMemo, useEffect } from "react";
+import { Conejo } from "../../../lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Pencil, Trash2, RefreshCw, Search, Eye, EyeOff,
+  CheckCircle2, XCircle, ChevronLeft, ChevronRight, Loader2,
+} from "lucide-react";
 
 interface AdminConejoListProps {
   conejos: Conejo[];
@@ -25,13 +21,7 @@ interface AdminConejoListProps {
 }
 
 export default function AdminConejoList({
-  conejos,
-  loading,
-  onEdit,
-  onDelete,
-  onRefresh,
-  onToggleVisible,
-  onToggleDisponibilidad,
+  conejos, loading, onEdit, onDelete, onRefresh, onToggleVisible, onToggleDisponibilidad,
 }: AdminConejoListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [updatingVisible, setUpdatingVisible] = useState<string | null>(null);
@@ -39,436 +29,209 @@ export default function AdminConejoList({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const filteredConejos = useMemo(() => 
-    conejos.filter(
-      (conejo) =>
-        conejo.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        conejo.raza.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        conejo.sexo.toLowerCase().includes(searchTerm.toLowerCase())
-    ),
-    [conejos, searchTerm]
-  );
+  const filteredConejos = useMemo(() =>
+    conejos.filter((c) =>
+      c.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.raza.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.sexo.toLowerCase().includes(searchTerm.toLowerCase())
+    ), [conejos, searchTerm]);
 
-  // Calcular paginación
   const totalPages = Math.ceil(filteredConejos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedConejos = filteredConejos.slice(startIndex, endIndex);
+  const paginatedConejos = filteredConejos.slice(startIndex, startIndex + itemsPerPage);
 
-  // Resetear página cuando cambia el filtro o si la página actual es mayor que el total de páginas
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm]);
+  useEffect(() => { if (currentPage > totalPages && totalPages > 0) setCurrentPage(1); }, [totalPages, currentPage]);
 
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [totalPages, currentPage]);
+  const formatoCLP = (v: number) =>
+    new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(v);
 
-  const formatoCLP = (valor: number) =>
-    new Intl.NumberFormat("es-CL", {
-      style: "currency",
-      currency: "CLP",
-      maximumFractionDigits: 0,
-    }).format(valor);
-
-  const handleToggleVisible = async (conejo: Conejo) => {
-    const newVisible = !conejo.visible;
-    setUpdatingVisible(conejo.id);
-    try {
-      await onToggleVisible(conejo.id, newVisible);
-    } finally {
-      setUpdatingVisible(null);
-    }
+  const handleToggleVisible = async (c: Conejo) => {
+    setUpdatingVisible(c.id);
+    try { await onToggleVisible(c.id, !c.visible); } finally { setUpdatingVisible(null); }
   };
 
-  const handleToggleDisponibilidad = async (conejo: Conejo) => {
-    const nueva =
-      conejo.disponibilidad === "Disponible" ? "no Disponible" : "Disponible";
-    setUpdatingDisponibilidad(conejo.id);
-    try {
-      await onToggleDisponibilidad(conejo.id, nueva);
-    } finally {
-      setUpdatingDisponibilidad(null);
-    }
+  const handleToggleDisponibilidad = async (c: Conejo) => {
+    const nueva = c.disponibilidad === "Disponible" ? "no Disponible" : "Disponible";
+    setUpdatingDisponibilidad(c.id);
+    try { await onToggleDisponibilidad(c.id, nueva); } finally { setUpdatingDisponibilidad(null); }
   };
 
   const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if (page >= 1 && page <= totalPages) { setCurrentPage(page); window.scrollTo({ top: 0, behavior: "smooth" }); }
   };
 
   if (loading) {
     return (
-      <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-        <p className="text-white">Cargando conejitos...</p>
-      </div>
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-16 gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Cargando conejitos...</p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-      {/* Header con búsqueda */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Buscar por ID, raza o sexo..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
+    <Card>
+      <CardHeader className="pb-4">
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por ID, raza o sexo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">{filteredConejos.length} conejos</span>
+            <Button variant="outline" size="sm" onClick={onRefresh}>
+              <RefreshCw className="h-4 w-4 mr-1.5" /> Actualizar
+            </Button>
+          </div>
         </div>
-        <button
-          onClick={onRefresh}
-          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
-        >
-          <FaSyncAlt /> Actualizar
-        </button>
-        <div className="text-white font-semibold text-sm md:text-base">
-          Total: {filteredConejos.length} conejitos
-          {filteredConejos.length > itemsPerPage && (
-            <span className="text-gray-400 ml-2">
-              (Página {currentPage} de {totalPages})
-            </span>
-          )}
-        </div>
-      </div>
+      </CardHeader>
 
-      {/* Lista de conejos - Vista Desktop (Tabla) */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-white/20 text-left">
-              <th className="pb-3 text-white font-semibold">ID</th>
-              <th className="pb-3 text-white font-semibold">Raza</th>
-              <th className="pb-3 text-white font-semibold">Sexo</th>
-              <th className="pb-3 text-white font-semibold">Precio</th>
-              <th className="pb-3 text-white font-semibold">Nacimiento</th>
-              <th className="pb-3 text-white font-semibold">Estado</th>
-              <th className="pb-3 text-white font-semibold">Reproductor</th>
-              <th className="pb-3 text-white font-semibold">Visible</th>
-              <th className="pb-3 text-white font-semibold text-right">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedConejos.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="py-8 text-center text-gray-300">
-                  No se encontraron conejitos
-                </td>
+      <CardContent className="p-0">
+        {/* Vista Desktop */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                {["ID", "Raza", "Sexo", "Precio", "Nacimiento", "Estado", "Tipo", "Visible", ""].map((h) => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    {h}
+                  </th>
+                ))}
               </tr>
-            ) : (
-              paginatedConejos.map((conejo) => (
-                <tr
-                  key={conejo.id}
-                  className="border-b border-white/10 hover:bg-white/5 transition-colors"
-                >
-                  <td className="py-4 text-white font-mono">{conejo.id}</td>
-                  <td className="py-4 text-gray-300">{conejo.raza}</td>
-                  <td className="py-4 text-gray-300">{conejo.sexo}</td>
-                  <td className="py-4 text-green-400 font-semibold">
-                    {formatoCLP(conejo.precio)}
-                    {conejo.tieneDescuento && (
-                      <span className="ml-2 text-xs text-red-400">
-                        -{((conejo as any).porcentajeDescuento ?? 30)}%
-                      </span>
+            </thead>
+            <tbody>
+              {paginatedConejos.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="py-12 text-center text-muted-foreground">No se encontraron conejitos</td>
+                </tr>
+              ) : paginatedConejos.map((c) => (
+                <tr key={c.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-3 font-mono font-semibold text-foreground">{c.id}</td>
+                  <td className="px-4 py-3 text-foreground">{c.raza}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{c.sexo}</td>
+                  <td className="px-4 py-3 font-semibold text-primary">
+                    {formatoCLP(c.precio)}
+                    {c.tieneDescuento && (
+                      <span className="ml-1.5 text-xs text-destructive">-{(c as any).porcentajeDescuento ?? 30}%</span>
                     )}
                   </td>
-                  <td className="py-4 text-gray-300">
-                    {conejo.fechaNacimiento}
+                  <td className="px-4 py-3 text-muted-foreground">{c.fechaNacimiento}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant={c.disponibilidad === "Disponible" ? "default" : "destructive"}>
+                      {c.disponibilidad}
+                    </Badge>
                   </td>
-                  <td className="py-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        conejo.disponibilidad === "Disponible"
-                          ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white"
-                      }`}
-                    >
-                      {conejo.disponibilidad}
-                    </span>
+                  <td className="px-4 py-3">
+                    {c.reproductor ? <Badge variant="secondary">Reproductor</Badge> : <span className="text-muted-foreground text-xs">Venta</span>}
                   </td>
-                  <td className="py-4">
-                    {conejo.reproductor ? (
-                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-purple-500 text-white">
-                        Sí
-                      </span>
-                    ) : (
-                      <span className="text-gray-400">No</span>
-                    )}
+                  <td className="px-4 py-3">
+                    <Badge variant={c.visible ? "default" : "outline"} className={!c.visible ? "text-muted-foreground" : ""}>
+                      {c.visible ? "Sí" : "No"}
+                    </Badge>
                   </td>
-                  <td className="py-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        conejo.visible
-                          ? "bg-green-500 text-white"
-                          : "bg-gray-500 text-white"
-                      }`}
-                    >
-                      {conejo.visible ? "Sí" : "No"}
-                    </span>
-                  </td>
-                  <td className="py-4">
-                    <div className="flex justify-end gap-2 flex-wrap">
-                      <button
-                        onClick={() => handleToggleDisponibilidad(conejo)}
-                        disabled={updatingDisponibilidad === conejo.id}
-                        className={`p-2 rounded-lg transition-colors ${
-                          conejo.disponibilidad === "Disponible"
-                            ? "bg-orange-600 hover:bg-orange-700 text-white"
-                            : "bg-emerald-600 hover:bg-emerald-700 text-white"
-                        } disabled:opacity-50 disabled:cursor-not-allowed`}
-                        title={
-                          conejo.disponibilidad === "Disponible"
-                            ? "Marcar no disponible"
-                            : "Marcar disponible"
-                        }
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-1.5">
+                      <Button
+                        variant="outline" size="icon"
+                        onClick={() => handleToggleDisponibilidad(c)}
+                        disabled={updatingDisponibilidad === c.id}
+                        title={c.disponibilidad === "Disponible" ? "Marcar no disponible" : "Marcar disponible"}
+                        className={c.disponibilidad === "Disponible" ? "text-destructive hover:text-destructive hover:bg-destructive/10" : "text-primary hover:bg-primary/10"}
                       >
-                        {updatingDisponibilidad === conejo.id ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                        ) : conejo.disponibilidad === "Disponible" ? (
-                          <FaBan />
-                        ) : (
-                          <FaCheck />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleToggleVisible(conejo)}
-                        disabled={updatingVisible === conejo.id}
-                        className={`p-2 rounded-lg transition-colors ${
-                          conejo.visible
-                            ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                            : "bg-green-500 hover:bg-green-600 text-white"
-                        } disabled:opacity-50 disabled:cursor-not-allowed`}
-                        title={conejo.visible ? "Ocultar del catálogo" : "Mostrar en catálogo"}
+                        {updatingDisponibilidad === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : c.disponibilidad === "Disponible" ? <XCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                      </Button>
+                      <Button
+                        variant="outline" size="icon"
+                        onClick={() => handleToggleVisible(c)}
+                        disabled={updatingVisible === c.id}
+                        title={c.visible ? "Ocultar del catálogo" : "Mostrar en catálogo"}
+                        className={c.visible ? "text-amber-500 hover:bg-amber-500/10" : "text-primary hover:bg-primary/10"}
                       >
-                        {updatingVisible === conejo.id ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        ) : conejo.visible ? (
-                          <FaEyeSlash />
-                        ) : (
-                          <FaEye />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => onEdit(conejo)}
-                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                        title="Editar"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => onDelete(conejo.id)}
-                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                        title="Eliminar"
-                      >
-                        <FaTrash />
-                      </button>
+                        {updatingVisible === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : c.visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                      <Button variant="outline" size="icon" onClick={() => onEdit(c)} title="Editar">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="outline" size="icon" onClick={() => onDelete(c.id)} title="Eliminar" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Lista de conejos - Vista Mobile (Cards) */}
-      <div className="md:hidden space-y-4">
-        {paginatedConejos.length === 0 ? (
-          <div className="py-8 text-center text-gray-300">
-            No se encontraron conejitos
-          </div>
-        ) : (
-          paginatedConejos.map((conejo) => (
-            <div
-              key={conejo.id}
-              className="bg-white/5 rounded-lg p-4 border border-white/10"
-            >
-              <div className="flex justify-between items-start mb-3">
+        {/* Vista Mobile */}
+        <div className="md:hidden divide-y divide-border">
+          {paginatedConejos.length === 0 ? (
+            <div className="py-12 text-center text-muted-foreground">No se encontraron conejitos</div>
+          ) : paginatedConejos.map((c) => (
+            <div key={c.id} className="p-4 space-y-3">
+              <div className="flex items-start justify-between gap-2">
                 <div>
-                  <h3 className="text-white font-mono font-bold text-lg">{conejo.id}</h3>
-                  <p className="text-gray-300 text-sm">{conejo.raza}</p>
+                  <p className="font-mono font-bold text-foreground">{c.id}</p>
+                  <p className="text-sm text-muted-foreground">{c.raza} · {c.sexo}</p>
                 </div>
-                <div className="flex gap-2 flex-wrap justify-end">
-                  <button
-                    onClick={() => handleToggleDisponibilidad(conejo)}
-                    disabled={updatingDisponibilidad === conejo.id}
-                    className={`p-2 rounded-lg transition-colors ${
-                      conejo.disponibilidad === "Disponible"
-                        ? "bg-orange-600 hover:bg-orange-700 text-white"
-                        : "bg-emerald-600 hover:bg-emerald-700 text-white"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                    title={
-                      conejo.disponibilidad === "Disponible"
-                        ? "No disponible"
-                        : "Disponible"
-                    }
-                  >
-                    {updatingDisponibilidad === conejo.id ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                    ) : conejo.disponibilidad === "Disponible" ? (
-                      <FaBan />
-                    ) : (
-                      <FaCheck />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => handleToggleVisible(conejo)}
-                    disabled={updatingVisible === conejo.id}
-                    className={`p-2 rounded-lg transition-colors ${
-                      conejo.visible
-                        ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                        : "bg-green-500 hover:bg-green-600 text-white"
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                    title={conejo.visible ? "Ocultar" : "Mostrar"}
-                  >
-                    {updatingVisible === conejo.id ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    ) : conejo.visible ? (
-                      <FaEyeSlash />
-                    ) : (
-                      <FaEye />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => onEdit(conejo)}
-                    className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                    title="Editar"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    onClick={() => onDelete(conejo.id)}
-                    className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                    title="Eliminar"
-                  >
-                    <FaTrash />
-                  </button>
+                <div className="flex gap-1.5 flex-wrap justify-end">
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleToggleDisponibilidad(c)} disabled={updatingDisponibilidad === c.id} title={c.disponibilidad === "Disponible" ? "Marcar no disponible" : "Marcar disponible"}>
+                    {updatingDisponibilidad === c.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : c.disponibilidad === "Disponible" ? <XCircle className="h-3.5 w-3.5 text-destructive" /> : <CheckCircle2 className="h-3.5 w-3.5 text-primary" />}
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleToggleVisible(c)} disabled={updatingVisible === c.id} title={c.visible ? "Ocultar" : "Mostrar"}>
+                    {updatingVisible === c.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : c.visible ? <EyeOff className="h-3.5 w-3.5 text-amber-500" /> : <Eye className="h-3.5 w-3.5 text-primary" />}
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onEdit(c)}>
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => onDelete(c.id)}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <span className="text-gray-400">Sexo:</span>
-                  <span className="text-white ml-2">{conejo.sexo}</span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Nacimiento:</span>
-                  <span className="text-white ml-2">{conejo.fechaNacimiento}</span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Precio:</span>
-                  <span className="text-green-400 font-semibold ml-2">
-                    {formatoCLP(conejo.precio)}
-                    {conejo.tieneDescuento && (
-                      <span className="ml-1 text-xs text-red-400">
-                        -{((conejo as any).porcentajeDescuento ?? 30)}%
-                      </span>
-                    )}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Estado:</span>
-                  <span
-                    className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
-                      conejo.disponibilidad === "Disponible"
-                        ? "bg-green-500 text-white"
-                        : "bg-red-500 text-white"
-                    }`}
-                  >
-                    {conejo.disponibilidad}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Reproductor:</span>
-                  {conejo.reproductor ? (
-                    <span className="ml-2 px-2 py-1 rounded-full text-xs font-semibold bg-purple-500 text-white">
-                      Sí
-                    </span>
-                  ) : (
-                    <span className="text-gray-400 ml-2">No</span>
-                  )}
-                </div>
-                <div>
-                  <span className="text-gray-400">Visible:</span>
-                  <span
-                    className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
-                      conejo.visible
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-500 text-white"
-                    }`}
-                  >
-                    {conejo.visible ? "Sí" : "No"}
-                  </span>
-                </div>
+                <div><span className="text-muted-foreground">Precio: </span><span className="font-semibold text-primary">{formatoCLP(c.precio)}</span></div>
+                <div><span className="text-muted-foreground">Nacimiento: </span><span className="text-foreground">{c.fechaNacimiento}</span></div>
+                <div className="flex items-center gap-1.5"><span className="text-muted-foreground">Estado:</span><Badge variant={c.disponibilidad === "Disponible" ? "default" : "destructive"} className="text-xs">{c.disponibilidad}</Badge></div>
+                <div className="flex items-center gap-1.5"><span className="text-muted-foreground">Visible:</span><Badge variant={c.visible ? "default" : "outline"} className="text-xs">{c.visible ? "Sí" : "No"}</Badge></div>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
 
-      {/* Paginador */}
-      {totalPages > 1 && (
-        <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="text-white text-sm">
-            Mostrando {startIndex + 1} - {Math.min(endIndex, filteredConejos.length)} de {filteredConejos.length} conejitos
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Página anterior"
-            >
-              <FaChevronLeft />
-            </button>
-            <div className="flex gap-1">
+        {/* Paginador */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">
+              {startIndex + 1}–{Math.min(startIndex + itemsPerPage, filteredConejos.length)} de {filteredConejos.length}
+            </p>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNum;
-                if (totalPages <= 5) {
-                  pageNum = i + 1;
-                } else if (currentPage <= 3) {
-                  pageNum = i + 1;
-                } else if (currentPage >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
-                } else {
-                  pageNum = currentPage - 2 + i;
-                }
+                let p = totalPages <= 5 ? i + 1 : currentPage <= 3 ? i + 1 : currentPage >= totalPages - 2 ? totalPages - 4 + i : currentPage - 2 + i;
                 return (
-                  <button
-                    key={pageNum}
-                    onClick={() => goToPage(pageNum)}
-                    className={`px-3 py-2 rounded-lg transition-colors ${
-                      currentPage === pageNum
-                        ? "bg-purple-500 text-white"
-                        : "bg-white/10 hover:bg-white/20 text-white"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
+                  <Button key={p} variant={currentPage === p ? "default" : "outline"} size="icon" onClick={() => goToPage(p)}>
+                    {p}
+                  </Button>
                 );
               })}
+              <Button variant="outline" size="icon" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
-            <button
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Página siguiente"
-            >
-              <FaChevronRight />
-            </button>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
-

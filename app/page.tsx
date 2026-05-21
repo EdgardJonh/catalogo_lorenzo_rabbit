@@ -1,5 +1,5 @@
-import Image from "next/image";
 import CatalogoConejos from "./components/CatalogoConejos";
+import WhatsappButton from "./components/WhatsappButton";
 import conejosData from "../public/data/conejos.json";
 import { getConejos } from "../lib/supabase";
 
@@ -62,6 +62,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 p-8">
       <CatalogoConejos conejos={conejos} />
+      <WhatsappButton />
     </main>
   );
 }

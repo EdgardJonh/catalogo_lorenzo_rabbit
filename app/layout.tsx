@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@fontsource/inter";
-import WhatsappButton from "./components/WhatsappButton";
 import { Toaster } from "sonner";
 
 
@@ -30,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logos/logopes.svg" type="image/svg+xml" />
         {/* Open Graph y Twitter Card */}
@@ -46,7 +45,6 @@ export default function RootLayout({
       </head>
       <body className="font-sans bg-gray-50 text-gray-900">
         {children}
-        <WhatsappButton />
         <Toaster richColors position="top-right" />
       </body>
     </html>
