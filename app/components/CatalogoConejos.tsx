@@ -9,6 +9,7 @@ import styles  from "../styles/home.module.css";
 import Direccion from "./Direccion";
 import CatalogoMenu from "./CatalogoMenu";
 import BienvenidaModal from "./BienvenidaModal";
+import ConejitosDisponiblesBanner from "./ConejitosDisponiblesBanne";
 
 interface Conejo {
   id: string;
@@ -193,7 +194,8 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
          <Direccion />
          
          </div>
-
+      {/* Banner de conejitos disponibles */}
+      <ConejitosDisponiblesBanner />
       {/* Botón para abrir instrucciones de reserva */}
       <div className="flex justify-center mb-6">
         <button
