@@ -32,7 +32,6 @@ export async function GET(req: Request) {
     const id = searchParams.get('id');
 
     if (id) {
-      // Obtener una cruza específica
       const { data, error } = await supabase
         .from('cruzas')
         .select('*')
@@ -41,6 +40,15 @@ export async function GET(req: Request) {
 
       if (error) return NextResponse.json({ error: error.message }, { status: 400 });
       return NextResponse.json(data);
+    }
+
+    if (searchParams.get('nextId') === 'true') {
+      const { data: ids } = await supabase.from('cruzas').select('id');
+      const nums = (ids || [])
+        .map((r: any) => parseInt(String(r.id).replace(/^CRUZA/i, ''), 10))
+        .filter((n: number) => !isNaN(n));
+      const next = nums.length > 0 ? Math.max(...nums) + 1 : 1;
+      return NextResponse.json({ nextId: String(next).padStart(3, '0') });
     }
 
     // Obtener todas las cruzas

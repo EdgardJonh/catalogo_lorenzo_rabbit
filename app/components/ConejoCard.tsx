@@ -6,7 +6,6 @@ import {
   FaPaw,
   FaVenusMars,
   FaCalendarAlt,
-  FaMapMarkerAlt,
   FaWhatsapp,
   FaBirthdayCake,
 } from "react-icons/fa";
@@ -73,7 +72,7 @@ export default function ConejoCard({ conejo }: { conejo: Conejo }) {
     if (!modalOpen) return;
     // Agrega un estado al historial al abrir el modal
     window.history.pushState({ modal: true }, "");
-    const handlePopState = (e: PopStateEvent) => {
+    const handlePopState = (_e: PopStateEvent) => {
       setModalOpen(false);
     };
     window.addEventListener("popstate", handlePopState);
@@ -138,7 +137,7 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
     fechaNacParsed !== null ? edadEnMesesDesde(fechaNacParsed) : null;
 
   return (
-    <div className={`bg-white rounded-xl shadow-md flex flex-col items-center hover:shadow-lg transition-shadow ${
+    <div style={{ fontFamily: "var(--font-roboto)" }} className={`bg-white rounded-xl shadow-md flex flex-col items-center hover:shadow-lg transition-shadow ${
       !isDisponible ? 'opacity-60' : ''
     }`}>
       <div className="relative w-full">

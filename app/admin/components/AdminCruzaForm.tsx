@@ -35,6 +35,7 @@ export default function AdminCruzaForm({ cruza, conejos, onSave, onCancel }: Adm
     notas: "",
   });
   const [loading, setLoading] = useState(false);
+  const [loadingId, setLoadingId] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -47,11 +48,16 @@ export default function AdminCruzaForm({ cruza, conejos, onSave, onCancel }: Adm
         estado: cruza.estado, notas: cruza.notas || "",
       });
     } else {
-      setFormData({
-        id: `CRUZA${Math.floor(Math.random() * 9000) + 1000}`,
-        idPadre: "", idMadre: "", fechaCruza: "", fechaPartoEsperado: "", fechaPartoReal: "",
-        estado: "programada", notas: "",
-      });
+      setLoadingId(true);
+      fetch("/api/cruzas?nextId=true")
+        .then((r) => r.json())
+        .then((json) => {
+          setFormData((prev) => ({ ...prev, id: json.nextId ?? "001" }));
+        })
+        .catch(() => {
+          setFormData((prev) => ({ ...prev, id: "001" }));
+        })
+        .finally(() => setLoadingId(false));
     }
   }, [cruza]);
 
@@ -104,7 +110,10 @@ export default function AdminCruzaForm({ cruza, conejos, onSave, onCancel }: Adm
 
           <div className="space-y-2">
             <Label htmlFor="id">ID</Label>
-            <Input id="id" value={formData.id} onChange={(e) => set("id", e.target.value)} disabled={!!cruza} required />
+            <div className="relative">
+              <Input id="id" value={loadingId ? "Generando..." : formData.id} disabled required readOnly />
+              {loadingId && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

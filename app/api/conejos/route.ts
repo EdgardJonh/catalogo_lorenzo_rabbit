@@ -24,6 +24,26 @@ function toISODateFromDMY(dmy: string): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+export async function GET(req: Request) {
+  try {
+    const supabase = getSupabaseClient();
+    const { searchParams } = new URL(req.url);
+
+    if (searchParams.get('nextId') === 'true') {
+      const { data: ids } = await supabase.from('conejos').select('id');
+      const nums = (ids || [])
+        .map((r: any) => parseInt(String(r.id).replace(/^C/i, ''), 10))
+        .filter((n: number) => !isNaN(n) && n < 1000);
+      const next = nums.length > 0 ? Math.max(...nums) + 1 : 1;
+      return NextResponse.json({ nextId: `C${next}` });
+    }
+
+    return NextResponse.json({ error: 'Parámetro no soportado' }, { status: 400 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e?.message || 'Error' }, { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const supabase = getSupabaseClient();

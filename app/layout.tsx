@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Roboto, Inter } from "next/font/google";
 import "./globals.css";
-import "@fontsource/inter";
 import { Toaster } from "sonner";
 
 
@@ -14,6 +13,18 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -43,7 +54,7 @@ export default function RootLayout({
         <meta name="twitter:description" content="Catálogo web de conejos disponibles del Criadero Lorenzo Rabbit. Mini Lop, Holland Lop y más razas disponibles." />
         <meta name="twitter:image" content={`${SITE_URL}/logos/logolorenzo.png`} />
       </head>
-      <body className="font-sans bg-gray-50 text-gray-900">
+      <body className={`${roboto.variable} ${inter.variable} font-sans bg-gray-50 text-gray-900`}>
         {children}
         <Toaster richColors position="top-right" />
       </body>

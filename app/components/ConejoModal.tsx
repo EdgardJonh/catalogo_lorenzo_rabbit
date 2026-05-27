@@ -76,7 +76,8 @@ export default function ConejoModal({ fotos, onClose, id }: { fotos: string[]; o
   }, [index, fotos]);
   
   return (
-    <div 
+    <div
+      style={{ fontFamily: "var(--font-inter)" }}
       className={`fixed inset-0 z-[9999] flex items-center justify-center transition-all duration-300 ${
         isFullscreen 
           ? 'bg-black' 

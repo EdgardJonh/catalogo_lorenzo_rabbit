@@ -171,11 +171,11 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
         </div>
         {/* Títulos con fuentes personalizadas */}
         <div className="text-center mb-4">
-           <h1 className="text-3xl md:text-4xl font-bold text-purple-400 mb-1">
+           <h1 className={`${luckiestGuy.className} text-3xl md:text-4xl font-bold text-purple-400 mb-1}`}>
         ¡Bienvenidos a <span className={`${luckiestGuy.className} text-4xl text-gray-50`}>LorenZo Rabbit</span>!
       </h1>
         {/* <h1 className={`${luckiestGuy.className} text-5xl text-gray-400 font-bold mb-0`}>LorenZo Rabbit</h1> */}
-         <p className="text-gray-400 mb-6  mx-auto">
+         <p className={`${roboto.className} text-gray-400 mb-6  mx-auto}`}>
         Descubre el adorable mundo de nuestros conejitos y vive una experiencia única.
       </p>
       
@@ -190,7 +190,7 @@ export default function CatalogoConejos({ conejos }: CatalogoConejosProps) {
       <div >
         {/* <Festividad /> */}
       </div>
-      <div className="max-w-6xl mx-auto pb-3  px-4 sm:px-6 lg:px-8">
+      <div className={`${roboto.className} max-w-6xl mx-auto pb-3  px-4 sm:px-6 lg:px-8`}>
          <Direccion />
          
          </div>

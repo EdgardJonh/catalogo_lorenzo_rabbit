@@ -41,6 +41,7 @@ export default function AdminConejoForm({ conejo, onSave, onCancel }: AdminConej
     visible: true,
   });
   const [loading, setLoading] = useState(false);
+  const [loadingId, setLoadingId] = useState(false);
   const [previewPrincipal, setPreviewPrincipal] = useState<string | null>(null);
   const [previewAdicionales, setPreviewAdicionales] = useState<string[]>([]);
   const fileInputPrincipalRef = useRef<HTMLInputElement>(null);
@@ -68,10 +69,15 @@ export default function AdminConejoForm({ conejo, onSave, onCancel }: AdminConej
       setPreviewPrincipal(conejo.fotoPrincipal || null);
       setPreviewAdicionales(conejo.fotosAdicionales || []);
     } else {
-      const id = `C${Math.floor(Math.random() * 9000) + 1000}`;
-      setFormData({ id, raza: "", sexo: "Macho", precio: "", tieneDescuento: false, porcentajeDescuento: 0, fechaNacimiento: "", disponibilidad: "Disponible", fotoPrincipal: "", fotosAdicionales: "", reproductor: false, categoria: "ventas", visible: true });
+      setFormData({ id: "", raza: "", sexo: "Macho", precio: "", tieneDescuento: false, porcentajeDescuento: 0, fechaNacimiento: "", disponibilidad: "Disponible", fotoPrincipal: "", fotosAdicionales: "", reproductor: false, categoria: "ventas", visible: true });
       setPreviewPrincipal(null);
       setPreviewAdicionales([]);
+      setLoadingId(true);
+      fetch("/api/conejos?nextId=true")
+        .then((r) => r.json())
+        .then((json) => setFormData((prev) => ({ ...prev, id: json.nextId ?? "C1" })))
+        .catch(() => setFormData((prev) => ({ ...prev, id: "C1" })))
+        .finally(() => setLoadingId(false));
     }
   }, [conejo]);
 
@@ -141,7 +147,7 @@ export default function AdminConejoForm({ conejo, onSave, onCancel }: AdminConej
           precio: parseFloat(formData.precio), tiene_descuento: porcentajeDescuento > 0,
           porcentaje_descuento: porcentajeDescuento, fechaNacimiento: formData.fechaNacimiento,
           disponibilidad: formData.disponibilidad, fotoPrincipal: finalFotoPrincipal,
-          fotosAdicionales: finalFotosAdicionales, reproductor: formData.reproductor,
+          fotosAdicionales: finalFotosAdicionales, reproductor: formData.categoria !== "ventas",
           categoria: formData.categoria, visible: formData.visible,
         }),
       });
@@ -206,7 +212,16 @@ export default function AdminConejoForm({ conejo, onSave, onCancel }: AdminConej
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="id">ID <span className="text-destructive">*</span></Label>
-              <Input id="id" value={formData.id} onChange={(e) => set("id", e.target.value)} required />
+              <div className="relative">
+                <Input
+                  id="id"
+                  value={loadingId ? "" : formData.id}
+                  readOnly
+                  placeholder={loadingId ? "Generando..." : ""}
+                  className="bg-muted text-foreground cursor-default"
+                />
+                {loadingId && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />}
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Raza <span className="text-destructive">*</span></Label>
@@ -230,7 +245,7 @@ export default function AdminConejoForm({ conejo, onSave, onCancel }: AdminConej
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="precio">Precio <span className="text-destructive">*</span></Label>
+              <Label htmlFor="precio">Precio (CLP) <span className="text-destructive">*</span></Label>
               <Input id="precio" type="number" min="0" value={formData.precio} onChange={(e) => set("precio", e.target.value)} required />
             </div>
             <div className="space-y-2">
@@ -247,10 +262,6 @@ export default function AdminConejoForm({ conejo, onSave, onCancel }: AdminConej
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          {/* Descuento y categoría */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="porcentajeDescuento">Descuento (%)</Label>
               <Input
@@ -264,26 +275,40 @@ export default function AdminConejoForm({ conejo, onSave, onCancel }: AdminConej
               />
               <p className="text-xs text-muted-foreground">0 = sin descuento</p>
             </div>
-            <div className="space-y-2">
-              <Label>Categoría</Label>
-              <Select value={formData.categoria} onValueChange={(v) => set("categoria", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ventas">Ventas</SelectItem>
-                  <SelectItem value="reproductor">Reproductor</SelectItem>
-                  <SelectItem value="padre">Padre</SelectItem>
-                  <SelectItem value="madre">Madre</SelectItem>
-                </SelectContent>
-              </Select>
+          </div>
+
+          {/* Categoría */}
+          <div className="space-y-3">
+            <Label>Categoría <span className="text-destructive">*</span></Label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {(
+                [
+                  { value: "ventas",      label: "Ventas",      emoji: "🛒", active: "bg-blue-500 text-white border-blue-600 shadow-md" },
+                  { value: "reproductor", label: "Reproductor", emoji: "🐇", active: "bg-violet-500 text-white border-violet-600 shadow-md" },
+                  { value: "padre",       label: "Padre",       emoji: "♂️", active: "bg-emerald-500 text-white border-emerald-600 shadow-md" },
+                  { value: "madre",       label: "Madre",       emoji: "♀️", active: "bg-rose-500 text-white border-rose-600 shadow-md" },
+                ] as const
+              ).map(({ value, label, emoji, active }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => set("categoria", value)}
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-1 rounded-xl border-2 py-3 px-2 text-sm font-semibold transition-all duration-150",
+                    formData.categoria === value
+                      ? active
+                      : "border-border bg-muted text-muted-foreground hover:border-primary hover:text-foreground"
+                  )}
+                >
+                  <span className="text-xl">{emoji}</span>
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
           {/* Toggles */}
           <div className="flex flex-wrap gap-6">
-            <div className="flex items-center gap-3">
-              <Switch id="reproductor" checked={formData.reproductor} onCheckedChange={(v) => set("reproductor", v)} />
-              <Label htmlFor="reproductor">Es Reproductor</Label>
-            </div>
             <div className="flex items-center gap-3">
               <Switch id="visible" checked={formData.visible} onCheckedChange={(v) => set("visible", v)} />
               <Label htmlFor="visible">Visible en Catálogo</Label>
