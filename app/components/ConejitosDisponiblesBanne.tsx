@@ -11,7 +11,7 @@ export default function ConejitosDisponiblesBanner() {
         </h1>
 
         <p className="mt-4 text-xl md:text-2xl font-semibold text-pink-100">
-          para el <span className="text-yellow-300">30 de mayo 2026</span>
+          para el <span className="text-yellow-300">31 de mayo 2026</span>
         </p>
 
         <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
