@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import {
   Rabbit, LogOut, Plus, Moon, Sun, Loader2, AlertTriangle,
   Search, GitBranch, Baby, HeartPulse, CheckCircle2, ArrowUpRight,
-  LayoutDashboard, ChevronRight,
+  LayoutDashboard, ChevronRight, Menu, X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -62,6 +62,7 @@ export default function AdminPage() {
   const [activeTab,          setActiveTab]          = useState<TabId>("dashboard");
   const [initializing,       setInitializing]       = useState(true);
   const [sidebarOpen,        setSidebarOpen]        = useState(false);
+  const [mobileMenuOpen,     setMobileMenuOpen]     = useState(false);
 
   useEffect(() => {
     try { setSupabase(createSupabaseBrowserClient()); }
@@ -198,6 +199,7 @@ export default function AdminPage() {
   const handleNavClick = (id: TabId) => {
     setActiveTab(id);
     closeAllForms();
+    setMobileMenuOpen(false);
   };
 
   const handleNewItem = () => {
@@ -234,12 +236,20 @@ export default function AdminPage() {
   return (
     <div className="flex h-screen overflow-hidden bg-muted/40 relative">
 
-      {/* ── Botón contraer/expandir — flota sobre el borde del sidebar ── */}
+      {/* ── Backdrop móvil ── */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* ── Botón contraer/expandir — solo desktop ── */}
       <button
         onClick={() => setSidebarOpen(o => !o)}
         title={sidebarOpen ? "Contraer menú" : "Expandir menú"}
         style={{ left: sidebarOpen ? "192px" : "48px" }}
-        className="absolute top-12 z-50 w-8 h-8 rounded-full bg-primary border-[3px] border-sidebar flex items-center justify-center transition-[left] duration-300 ease-in-out"
+        className="hidden md:flex absolute top-12 z-50 w-8 h-8 rounded-full bg-primary border-[3px] border-sidebar items-center justify-center transition-[left] duration-300 ease-in-out"
       >
         <ChevronRight
           className={cn(
@@ -254,25 +264,38 @@ export default function AdminPage() {
       ══════════════════════════════ */}
       <aside
         className={cn(
-          "shrink-0 flex flex-col py-4 bg-sidebar border-r border-sidebar-border",
-          "transition-[width] duration-300 ease-in-out overflow-hidden",
-          sidebarOpen ? "w-52" : "w-16"
+          "flex flex-col py-4 bg-sidebar border-r border-sidebar-border overflow-hidden",
+          // Móvil: drawer fijo que entra/sale
+          "fixed inset-y-0 left-0 z-50 w-64 transition-transform duration-300 ease-in-out",
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full",
+          // Desktop: inline, sin transform, ancho controlado
+          "md:relative md:z-auto md:translate-x-0 md:shrink-0",
+          "md:transition-[width] md:duration-300 md:ease-in-out",
+          sidebarOpen ? "md:w-52" : "md:w-16"
         )}
       >
 
-        {/* Logo */}
+        {/* Logo + botón cerrar en móvil */}
         <div className={cn(
           "flex items-center gap-3 mb-6 px-3",
-          sidebarOpen ? "justify-start" : "justify-center"
+          (sidebarOpen || mobileMenuOpen) ? "justify-start" : "justify-center"
         )}>
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-md shadow-primary/30">
             <Rabbit className="w-5 h-5 text-primary-foreground" />
           </div>
-          {sidebarOpen && (
-            <div className="overflow-hidden">
+          {(sidebarOpen || mobileMenuOpen) && (
+            <div className="overflow-hidden flex-1">
               <p className="text-sidebar-foreground font-bold text-sm leading-tight whitespace-nowrap">LorenZo</p>
               <p className="text-sidebar-foreground/50 text-xs whitespace-nowrap">Rabbit Admin</p>
             </div>
+          )}
+          {mobileMenuOpen && (
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="md:hidden ml-auto p-1.5 rounded-lg text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              <X className="h-4 w-4" />
+            </button>
           )}
         </div>
 
@@ -284,17 +307,17 @@ export default function AdminPage() {
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                title={!sidebarOpen ? item.label : undefined}
+                title={(!sidebarOpen && !mobileMenuOpen) ? item.label : undefined}
                 className={cn(
                   "flex items-center gap-3 rounded-xl h-10 px-2.5 w-full transition-all duration-150",
-                  sidebarOpen ? "justify-start" : "justify-center",
+                  (sidebarOpen || mobileMenuOpen) ? "justify-start" : "justify-center",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
                     : "text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                 )}
               >
                 <span className="shrink-0">{item.icon}</span>
-                {sidebarOpen && (
+                {(sidebarOpen || mobileMenuOpen) && (
                   <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>
                 )}
               </button>
@@ -310,7 +333,7 @@ export default function AdminPage() {
             title={theme === "dark" ? "Modo claro" : "Modo oscuro"}
             className={cn(
               "flex items-center gap-3 rounded-xl h-10 px-2.5 w-full transition-all duration-150",
-              sidebarOpen ? "justify-start" : "justify-center",
+              (sidebarOpen || mobileMenuOpen) ? "justify-start" : "justify-center",
               "text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground"
             )}
           >
@@ -318,7 +341,7 @@ export default function AdminPage() {
               ? <Sun  className="h-5 w-5 shrink-0" />
               : <Moon className="h-5 w-5 shrink-0" />
             }
-            {sidebarOpen && (
+            {(sidebarOpen || mobileMenuOpen) && (
               <span className="text-sm font-medium whitespace-nowrap">
                 {theme === "dark" ? "Modo claro" : "Modo oscuro"}
               </span>
@@ -331,12 +354,12 @@ export default function AdminPage() {
             title="Cerrar sesión"
             className={cn(
               "flex items-center gap-3 rounded-xl h-10 px-2.5 w-full transition-all duration-150",
-              sidebarOpen ? "justify-start" : "justify-center",
+              (sidebarOpen || mobileMenuOpen) ? "justify-start" : "justify-center",
               "text-red-400/70 hover:bg-red-500/20 hover:text-red-400"
             )}
           >
             <LogOut className="h-5 w-5 shrink-0" />
-            {sidebarOpen && <span className="text-sm font-medium whitespace-nowrap">Cerrar sesión</span>}
+            {(sidebarOpen || mobileMenuOpen) && <span className="text-sm font-medium whitespace-nowrap">Cerrar sesión</span>}
           </button>
         </div>
       </aside>
@@ -347,7 +370,16 @@ export default function AdminPage() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Topbar */}
-        <header className="h-14 shrink-0 flex items-center gap-4 px-6 bg-card border-b border-border shadow-sm">
+        <header className="h-14 shrink-0 flex items-center gap-4 px-4 sm:px-6 bg-card border-b border-border shadow-sm">
+          {/* Hamburger — solo móvil */}
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            onClick={() => setMobileMenuOpen(true)}
+            title="Abrir menú"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+
           <div className="relative max-w-xs w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
