@@ -56,6 +56,7 @@ export async function POST(req: Request) {
 
     const payload = {
       id: body.id,
+      nombre: body.nombre || null,
       raza: body.raza,
       sexo: body.sexo,
       precio: body.precio,

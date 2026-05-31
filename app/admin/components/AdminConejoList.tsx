@@ -9,6 +9,7 @@ import {
   Pencil, Trash2, RefreshCw, Search, Eye, EyeOff,
   CheckCircle2, XCircle, ChevronLeft, ChevronRight, Loader2,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AdminConejoListProps {
   conejos: Conejo[];
@@ -24,27 +25,49 @@ export default function AdminConejoList({
   conejos, loading, onEdit, onDelete, onRefresh, onToggleVisible, onToggleDisponibilidad,
 }: AdminConejoListProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategoria, setSelectedCategoria] = useState<string | null>(null);
   const [updatingVisible, setUpdatingVisible] = useState<string | null>(null);
   const [updatingDisponibilidad, setUpdatingDisponibilidad] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const filteredConejos = useMemo(() =>
-    conejos.filter((c) =>
-      c.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.raza.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.sexo.toLowerCase().includes(searchTerm.toLowerCase())
-    ), [conejos, searchTerm]);
+    conejos.filter((c) => {
+      const term = searchTerm.toLowerCase();
+      const matchesSearch =
+        c.id.toLowerCase().includes(term) ||
+        c.raza.toLowerCase().includes(term) ||
+        c.sexo.toLowerCase().includes(term) ||
+        ((c as any).nombre || "").toLowerCase().includes(term);
+      const cat = c.categoria || (c.reproductor ? "reproductor" : "ventas");
+      const matchesCat = !selectedCategoria || cat === selectedCategoria;
+      return matchesSearch && matchesCat;
+    }), [conejos, searchTerm, selectedCategoria]);
 
   const totalPages = Math.ceil(filteredConejos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedConejos = filteredConejos.slice(startIndex, startIndex + itemsPerPage);
 
-  useEffect(() => { setCurrentPage(1); }, [searchTerm]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, selectedCategoria]);
   useEffect(() => { if (currentPage > totalPages && totalPages > 0) setCurrentPage(1); }, [totalPages, currentPage]);
 
   const formatoCLP = (v: number) =>
     new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(v);
+
+  const FILTER_CATS = [
+    { value: null,          label: "Todos",      emoji: "🐰", activeClass: "bg-gray-700 text-white border-gray-800" },
+    { value: "ventas",      label: "Ventas",     emoji: "🛒", activeClass: "bg-blue-500 text-white border-blue-600" },
+    { value: "reproductor", label: "Reproductor",emoji: "🐇", activeClass: "bg-violet-500 text-white border-violet-600" },
+    { value: "padre",       label: "Padre",      emoji: "♂️", activeClass: "bg-emerald-500 text-white border-emerald-600" },
+    { value: "madre",       label: "Madre",      emoji: "♀️", activeClass: "bg-rose-500 text-white border-rose-600" },
+  ] as const;
+
+  const CAT_BADGE: Record<string, { label: string; cls: string }> = {
+    ventas:      { label: "Ventas",      cls: "bg-blue-100 text-blue-700 border-blue-200" },
+    reproductor: { label: "Reproductor", cls: "bg-violet-100 text-violet-700 border-violet-200" },
+    padre:       { label: "Padre",       cls: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+    madre:       { label: "Madre",       cls: "bg-rose-100 text-rose-700 border-rose-200" },
+  };
 
   const handleToggleVisible = async (c: Conejo) => {
     setUpdatingVisible(c.id);
@@ -74,12 +97,12 @@ export default function AdminConejoList({
 
   return (
     <Card>
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-4 space-y-3">
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por ID, raza o sexo..."
+              placeholder="Buscar por ID, nombre, raza o sexo..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
@@ -91,6 +114,33 @@ export default function AdminConejoList({
               <RefreshCw className="h-4 w-4 mr-1.5" /> Actualizar
             </Button>
           </div>
+        </div>
+
+        {/* Filtro por categoría */}
+        <div className="flex flex-wrap gap-2">
+          {FILTER_CATS.map(({ value, label, emoji, activeClass }) => {
+            const isActive = selectedCategoria === value;
+            const count = value === null
+              ? conejos.length
+              : conejos.filter((c) => (c.categoria || (c.reproductor ? "reproductor" : "ventas")) === value).length;
+            return (
+              <button
+                key={String(value)}
+                type="button"
+                onClick={() => setSelectedCategoria(value)}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all duration-150",
+                  isActive ? activeClass : "border-border bg-muted text-muted-foreground hover:border-primary hover:text-foreground"
+                )}
+              >
+                <span>{emoji}</span>
+                {label}
+                <span className={cn("ml-0.5 px-1.5 py-0.5 rounded-full text-[10px]", isActive ? "bg-white/20" : "bg-muted-foreground/15")}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </CardHeader>
 
@@ -130,7 +180,11 @@ export default function AdminConejoList({
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
-                    {c.reproductor ? <Badge variant="secondary">Reproductor</Badge> : <span className="text-muted-foreground text-xs">Venta</span>}
+                    {(() => {
+                      const cat = c.categoria || (c.reproductor ? "reproductor" : "ventas");
+                      const b = CAT_BADGE[cat] ?? CAT_BADGE["ventas"];
+                      return <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border", b.cls)}>{b.label}</span>;
+                    })()}
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant={c.visible ? "default" : "outline"} className={!c.visible ? "text-muted-foreground" : ""}>
@@ -202,6 +256,14 @@ export default function AdminConejoList({
                 <div><span className="text-muted-foreground">Nacimiento: </span><span className="text-foreground">{c.fechaNacimiento}</span></div>
                 <div className="flex items-center gap-1.5"><span className="text-muted-foreground">Estado:</span><Badge variant={c.disponibilidad === "Disponible" ? "default" : "destructive"} className="text-xs">{c.disponibilidad}</Badge></div>
                 <div className="flex items-center gap-1.5"><span className="text-muted-foreground">Visible:</span><Badge variant={c.visible ? "default" : "outline"} className="text-xs">{c.visible ? "Sí" : "No"}</Badge></div>
+                <div className="flex items-center gap-1.5 col-span-2">
+                  <span className="text-muted-foreground">Categoría:</span>
+                  {(() => {
+                    const cat = c.categoria || (c.reproductor ? "reproductor" : "ventas");
+                    const b = CAT_BADGE[cat] ?? CAT_BADGE["ventas"];
+                    return <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border", b.cls)}>{b.label}</span>;
+                  })()}
+                </div>
               </div>
             </div>
           ))}

@@ -5,6 +5,7 @@ export type CategoriaConejo = 'reproductor' | 'ventas' | 'padre' | 'madre';
 
 export interface ConejoDB {
   id: string;
+  nombre?: string;
   raza: string;
   sexo: string;
   precio: number;
@@ -24,6 +25,7 @@ export interface ConejoDB {
 // Mapeo de DB a formato de la app
 export interface Conejo {
   id: string;
+  nombre?: string;
   raza: string;
   sexo: string;
   precio: number;
