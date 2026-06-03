@@ -111,7 +111,7 @@ export default function AdminCruzaForm({ cruza, conejos, onSave, onCancel }: Adm
           <div className="space-y-2">
             <Label htmlFor="id">ID</Label>
             <div className="relative">
-              <Input id="id" value={loadingId ? "Generando..." : formData.id} disabled required readOnly />
+              <Input id="id" value={loadingId ? "Generando..." : formData.id} readOnly required className="bg-muted cursor-default" />
               {loadingId && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />}
             </div>
           </div>
@@ -122,7 +122,11 @@ export default function AdminCruzaForm({ cruza, conejos, onSave, onCancel }: Adm
               <Select value={formData.idPadre} onValueChange={(v) => set("idPadre", v)}>
                 <SelectTrigger><SelectValue placeholder="Selecciona un macho" /></SelectTrigger>
                 <SelectContent>
-                  {machos.map((m) => <SelectItem key={m.id} value={m.id}>{m.id} — {m.raza} ({m.categoria})</SelectItem>)}
+                  {machos.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.id}{m.nombre ? ` — ${m.nombre}` : ""} · {m.raza} ({m.categoria})
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               {machos.length === 0 && <p className="text-xs text-amber-500">No hay machos disponibles (categoría: reproductor o padre)</p>}
@@ -132,7 +136,11 @@ export default function AdminCruzaForm({ cruza, conejos, onSave, onCancel }: Adm
               <Select value={formData.idMadre} onValueChange={(v) => set("idMadre", v)}>
                 <SelectTrigger><SelectValue placeholder="Selecciona una hembra" /></SelectTrigger>
                 <SelectContent>
-                  {hembras.map((h) => <SelectItem key={h.id} value={h.id}>{h.id} — {h.raza} ({h.categoria})</SelectItem>)}
+                  {hembras.map((h) => (
+                    <SelectItem key={h.id} value={h.id}>
+                      {h.id}{h.nombre ? ` — ${h.nombre}` : ""} · {h.raza} ({h.categoria})
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               {hembras.length === 0 && <p className="text-xs text-amber-500">No hay hembras disponibles (categoría: reproductor o madre)</p>}
