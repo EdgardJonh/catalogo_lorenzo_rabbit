@@ -149,6 +149,7 @@ export function mapConejoDBToConejo(conejoDB: ConejoDB): Conejo {
 
   return {
     id: conejoDB.id,
+    nombre: conejoDB.nombre,
     raza: conejoDB.raza,
     sexo: conejoDB.sexo,
     precio: conejoDB.precio,
