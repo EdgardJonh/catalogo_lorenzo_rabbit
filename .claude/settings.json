@@ -3,7 +3,17 @@
     "allow": [
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" status)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" log --oneline -5)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" diff --stat)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" add app/admin/components/AdminConejoForm.tsx app/admin/components/AdminCruzaForm.tsx app/api/conejos/route.ts app/api/cruzas/route.ts app/components/ConejoCard.tsx app/components/ConejoModal.tsx app/layout.tsx app/components/CatalogoConejos.tsx)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" push origin main)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" add app/admin/components/AdminConejoForm.tsx app/admin/components/AdminConejoList.tsx app/api/conejos/route.ts lib/supabase.ts)",
+      "Bash(git -C 'c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit' commit -m ' *)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" pull --rebase origin main)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" stash)",
+      "Bash(git -C \"c:\\\\Users\\\\edgar\\\\Documents\\\\GitHub\\\\catalogo_lorenzo_rabbit\" stash pop)"
     ]
   }
 }
