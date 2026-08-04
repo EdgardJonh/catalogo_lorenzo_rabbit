@@ -118,7 +118,7 @@ Al confirmar, se abrirá WhatsApp para completar la reserva.`;
 
 ¿Está disponible para reserva? ¡Gracias! 😊`;
 
-      const numeroWhatsApp = "+56992977211"; // Reemplaza con el número real
+      const numeroWhatsApp = "+56962702742"; // Reemplaza con el número real
       const urlWhatsApp = `https://wa.me/${numeroWhatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(mensaje)}`;
       
       window.open(urlWhatsApp, '_blank');
