@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FaTimes, FaWhatsapp, FaMapMarkerAlt, FaMotorcycle, FaSyringe } from "react-icons/fa";
-import { Luckiest_Guy } from "next/font/google";
+import { Luckiest_Guy, Roboto } from "next/font/google";
 
 const luckiestGuy = Luckiest_Guy({ subsets: ["latin"], weight: "400" });
+const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] });
 
 /** Si quieres cambiar el comportamiento: borra esta clave de sessionStorage o renómbrala para forzar que vuelva a mostrarse. */
 const STORAGE_KEY = "lr_bienvenida_vista";
@@ -54,7 +55,7 @@ export default function BienvenidaModal({ open, onClose }: BienvenidaModalProps)
       />
 
       {/* Panel: altura máxima centrada con aire arriba/abajo; el contenido hace scroll si hace falta */}
-      <div className="relative w-full max-w-lg max-h-[min(calc(100dvh-6rem),44rem)] flex flex-col bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-purple-500/40 shadow-2xl overflow-hidden my-auto">
+      <div className={`${roboto.className} relative w-full max-w-lg max-h-[min(calc(100dvh-6rem),44rem)] flex flex-col bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-purple-500/40 shadow-2xl overflow-hidden my-auto`}>
 
         {/* Banda superior decorativa */}
         <div className="h-1.5 w-full flex-shrink-0 bg-gradient-to-r from-purple-500 via-orange-400 to-purple-500" />

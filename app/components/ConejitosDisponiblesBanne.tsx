@@ -1,17 +1,21 @@
+import { Roboto } from "next/font/google";
+
+const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700", "900"] });
+
 export default function ConejitosDisponiblesBanner() {
   return (
-    <div className="w-full flex items-center justify-center py-10 px-4 bg-gradient-to-r from-violet-900 via-fuchsia-800 to-pink-700 rounded-3xl shadow-2xl">
+    <div className={`${roboto.className} w-full flex items-center justify-center py-10 px-4 bg-gradient-to-r from-violet-900 via-fuchsia-800 to-pink-700 rounded-3xl shadow-2xl`}>
       <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 max-w-3xl w-full text-center">
         <div className="flex items-center justify-center mb-4">
           <span className="text-5xl animate-bounce">🐰</span>
         </div>
 
         <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-wide leading-tight">
-          Proximamente, ¡conejitos disponibles!
+          Proximamente, ¡Conejitos disponibles!
         </h1>
 
         <p className="mt-4 text-xl md:text-2xl font-semibold text-pink-100">
-          proxima camada <span className="text-yellow-300">7 de noviembre 2026</span>
+          Próxima camada <span className="text-yellow-300">7 de noviembre 2026 🎄</span>
         </p>
 
         <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">

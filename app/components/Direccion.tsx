@@ -19,8 +19,8 @@ export default function Direccion() {
             <div className="ml-4">
               <h3 className="text-lg font-medium text-gray-900">Dirección</h3>
               {/* <p className="mt-1 text-gray-600">KM 4 Ruta U-40</p> */}
-              <p className="text-gray-600">Osorno, Región de Los Lagos</p>
-              <p className="text-gray-600">Chile</p>
+              <p className="text-gray-600">Osorno, Región de Los Lagos 🗻</p>
+              <p className="text-gray-600">Chile </p>
             </div>
           </div>
           
