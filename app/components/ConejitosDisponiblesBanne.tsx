@@ -15,7 +15,7 @@ export default function ConejitosDisponiblesBanner() {
         </h1>
 
         <p className="mt-4 text-xl md:text-2xl font-semibold text-pink-100">
-          Próxima camada <span className="text-yellow-300">7 de noviembre 2026 🎄</span>
+          Próxima camada <span className="text-yellow-300">7 de diciembre 2026 🎄</span>
         </p>
 
         <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
